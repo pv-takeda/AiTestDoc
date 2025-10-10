@@ -174,7 +174,7 @@
         border-radius: 0.25rem;
       }
       .list-item-box:hover {
-        background: #3a3a40;
+        background: #3a4a40;
       }
 
       .risk-box {
@@ -265,13 +265,13 @@
       <div class="slide active flex justify-center items-center text-center">
         <div>
           <h1 class="font-bold tracking-widest font-hero text-gradient">
-            GEMINI CLI
+            Gemini CLI
           </h1>
           <p class="mt-4 font-space font-display text-slate-300">
-            活用術ガイド
+            Visual Studio Codeと連携し加速するコード開発
           </p>
           <p class="text-slate-400 mt-12 tracking-wider font-h3">
-            // 開発現場の活用事例から組織導入まで
+            // 活用術と組織で導入する際の観点
           </p>
         </div>
       </div>
@@ -305,9 +305,7 @@
               <ul
                 class="list-disc list-inside ml-8 mt-2 font-body-md text-slate-300"
               >
-                <li>導入計画</li>
                 <li>コスト管理</li>
-                <li>セキュリティ</li>
                 <li>利用ガイドライン</li>
               </ul>
             </li>
@@ -341,6 +339,11 @@
                 <li>
                   <span class="text-blue font-bold">2017 :</span>
                   印刷会社で社内SE & 印刷オペレーター
+                  <ul
+                    class="list-disc list-inside ml-6 text-slate-300 font-body-sm"
+                  >
+                    <li>勤怠管理システムを開発しEXPO出展</li>
+                  </ul>
                 </li>
                 <li>
                   <span class="text-blue font-bold">2021 :</span>
@@ -377,33 +380,35 @@
       <!-- Slide 4: What is Gemini CLI? -->
       <div class="slide">
         <h2 class="font-bold slide-header font-h1">1. Gemini CLIとは？</h2>
-        <p class="text-slate-400 mb-10 font-body-lg">
-          ターミナルからGoogleのAIモデル「Gemini」を直接利用できるツール
-        </p>
         <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div class="info-box border-blue hover:border-blue">
-            <h3 class="font-bold text-blue font-h3">📝 テキスト生成</h3>
-            <p class="text-slate-300 mt-2 font-body-md">
-              質問応答、文章作成、翻訳、要약など
+          <div class="space-y-4">
+            <p class="font-body-lg text-slate-300">
+              ターミナルからGoogleのAIモデル「Gemini」を直接利用できるツールです。
             </p>
+            <ul class="space-y-3 font-body-md list-disc list-inside">
+              <li class="text-blue">
+                質問応答、文章作成、翻訳、要約などのテキスト生成
+              </li>
+              <li class="text-purple">
+                画像の内容を理解して応答するマルチモーダル機能
+              </li>
+              <li class="text-green">
+                長文の回答をリアルタイムで表示するストリーミング
+              </li>
+              <li class="text-yellow">
+                対話形式での継続的な利用が可能なチャットモード
+              </li>
+            </ul>
           </div>
-          <div class="info-box border-purple hover:border-purple">
-            <h3 class="font-bold text-purple font-h3">🖼️ マルチモーダル</h3>
-            <p class="text-slate-300 mt-2 font-body-md">
-              画像の内容を理解して応答
-            </p>
-          </div>
-          <div class="info-box border-green hover:border-green">
-            <h3 class="font-bold text-green font-h3">💨 ストリーミング</h3>
-            <p class="text-slate-300 mt-2 font-body-md">
-              長文の回答をリアルタイムで表示
-            </p>
-          </div>
-          <div class="info-box border-yellow hover:border-yellow">
-            <h3 class="font-bold text-yellow font-h3">💬 会話（チャット）</h3>
-            <p class="text-slate-300 mt-2 font-body-md">
-              対話形式での継続的な利用も可能
-            </p>
+          <div class="terminal-window">
+            <div class="terminal-header"></div>
+            <div class="terminal-body">
+              <img
+                src="gemini-cli-overview.png"
+                alt="Gemini CLIの概要"
+                class="w-full h-auto object-contain max-h-full"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -526,14 +531,14 @@
         <h2 class="font-bold slide-header font-h1">
           4. 高速化テクニック①: 思考を止めないコーディング
         </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div class="space-y-6">
+        <div class="grid grid-cols-3 gap-8 flex-grow items-center">
+          <div class="col-span-1 space-y-6">
             <div class="list-item-box border-l-4 border-blue">
               <h3 class="font-bold text-blue font-h3">
                 コンテキストの自動認識
               </h3>
               <p class="font-body-md mt-2">
-                開いているファイルや選択範囲を自動で認識。「このファイルのテストを書いて」「この部分をリファクタリングして」と指示するだけ。
+                開いているファイルや選択範囲を自動で認識。「このファイルのテストを書いて」と指示するだけ。
               </p>
             </div>
             <div class="list-item-box border-l-4 border-purple">
@@ -543,7 +548,7 @@
               </p>
             </div>
           </div>
-          <div class="terminal-window">
+          <div class="col-span-2 terminal-window">
             <div class="terminal-header"></div>
             <div class="terminal-body">
               <img
@@ -563,24 +568,12 @@
         </h2>
         <div class="grid grid-cols-2 gap-8 flex-grow items-center">
           <div class="space-y-6">
-            <div class="list-item-box border-l-4 border-green">
-              <h3 class="font-bold text-green font-h3">エラーを即座に解決</h3>
-              <p class="font-body-md mt-2">
-                エラーメッセージをGeminiに貼り付けて質問するだけで、迅速に原因と解決策のヒントを得られます。
-              </p>
-            </div>
             <div class="list-item-box border-l-4 border-yellow">
-              <h3 class="font-bold text-yellow font-h3">
+              <h3 class="font-bold text-yellow font-h2">
                 VSCodeタスクで自動化
               </h3>
-              <p class="font-body-md mt-2">
+              <p class="font-body-lg mt-2">
                 `tasks.json`によく使うコマンドを登録すれば、コマンドパレットやショートカットから一発で定型作業を実行できます。
-              </p>
-            </div>
-            <div class="list-item-box border-l-4 border-red">
-              <h3 class="font-bold text-red font-h3">スクリプトへの組み込み</h3>
-              <p class="font-body-md mt-2">
-                Makefileやシェルスクリプトに組み込み、コミット前の自動レビューやCI/CDパイプラインでの品質チェックを実現します。
               </p>
             </div>
           </div>
@@ -602,13 +595,13 @@
         <h2 class="font-bold slide-header font-h1">
           4. 高速化テクニック③: もうググらない
         </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div class="space-y-6">
+        <div class="grid grid-cols-3 gap-8 flex-grow items-center">
+          <div class="col-span-1 space-y-4">
             <div class="list-item-box border-l-4 border-blue">
               <h3 class="font-bold text-blue font-h3">
                 コードの意図を瞬時に理解
               </h3>
-              <p class="font-body-md mt-2">
+              <p class="font-body-sm mt-2">
                 複雑なコードを選択して「このコードは何をしているの？」と質問すれば、自然言語で分かりやすく解説してくれます。
               </p>
             </div>
@@ -616,7 +609,7 @@
               <h3 class="font-bold text-purple font-h3">
                 仕様書からコード生成
               </h3>
-              <p class="font-body-md mt-2">
+              <p class="font-body-sm mt-2">
                 API仕様書をインプットし、「この仕様のクライアントコードを生成して」と指示すれば、実装作業を自動化できます。
               </p>
             </div>
@@ -624,12 +617,12 @@
               <h3 class="font-bold text-green font-h3">
                 設計の壁打ち相手として
               </h3>
-              <p class="font-body-md mt-2">
+              <p class="font-body-sm mt-2">
                 「〇〇を実現するアーキテクチャ案を出して」のように問いかけることで、アイデアの整理や技術選定の助けになります。
               </p>
             </div>
           </div>
-          <div class="terminal-window">
+          <div class="col-span-2 terminal-window">
             <div class="terminal-header"></div>
             <div class="terminal-body">
               <img
@@ -647,7 +640,7 @@
         <h2 class="font-bold slide-header font-h1">
           5. 活用事例: テストコード生成 (1/3)
         </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
+        <div class="flex-grow flex flex-col justify-center text-center">
           <div class="space-y-6">
             <h3 class="font-bold text-blue font-h2">Step 1: 生成を命令する</h3>
             <p class="font-body-lg">
@@ -656,20 +649,10 @@
             <p class="font-body-md text-slate-400">
               `Jest`のような具体的なフレームワークを指定することで、より正確なコードが生成されやすくなります。
             </p>
-            <p class="code-block font-code mt-2">
+            <p class="code-block font-code mt-4 w-10/12 mx-auto text-left">
               cat server.js | gemini "Jestでユニットテストを書いて" >
               server.test.js
             </p>
-          </div>
-          <div class="terminal-window">
-            <div class="terminal-header"></div>
-            <div class="terminal-body">
-              <img
-                src="test-gen-step1.png"
-                alt="テストコードの生成を命令する"
-                class="w-full h-auto object-contain max-h-full"
-              />
-            </div>
           </div>
         </div>
       </div>
@@ -779,59 +762,42 @@
         </div>
       </div>
 
-      <!-- Slide 15: Adoption Plan -->
+      <!-- Slide 15: Cost -->
       <div class="slide">
         <h2 class="font-bold slide-header font-h1">
-          7. 組織導入ガイド: 導入計画
-        </h2>
-        <div class="text-center mb-10">
-          <h3 class="font-bold mb-4 text-blue font-h2">導入ロードマップ</h3>
-          <div class="flex justify-between items-center font-bold font-body-lg">
-            <div class="flex-1 p-4 border border-gray-600 rounded-md">
-              Phase 1: PoC
-            </div>
-            <div class="text-purple font-bold mx-4 font-h3">→</div>
-            <div class="flex-1 p-4 border border-gray-600 rounded-md">
-              Phase 2: 横展開
-            </div>
-            <div class="text-purple font-bold mx-4 font-h3">→</div>
-            <div class="flex-1 p-4 border border-gray-600 rounded-md">
-              Phase 3: 全社利用
-            </div>
-          </div>
-        </div>
-        <h3 class="font-bold mb-4 text-blue font-h2">成功のポイント</h3>
-        <ul class="list-disc list-inside space-y-3 font-body-lg">
-          <li>
-            <strong>スモールスタート:</strong>
-            小規模チームでPoCを実施し、効果を測定。
-          </li>
-          <li>
-            <strong>ユースケースの定義:</strong>
-            具体的な活用シナリオを洗い出す。
-          </li>
-          <li>
-            <strong>トレーニングとドキュメント:</strong>
-            勉強会開催、ベストプラクティスを文書化。
-          </li>
-          <li>
-            <strong>フィードバックの収集:</strong>
-            定期的にフィードバックを集め、ガイドラインを更新。
-          </li>
-        </ul>
-      </div>
-
-      <!-- Slide 16: Cost -->
-      <div class="slide">
-        <h2 class="font-bold slide-header font-h1">
-          8. 組織導入ガイド: コスト管理
+          7. 組織導入ガイド: コスト管理
         </h2>
         <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div>
-            <h3 class="font-bold mb-4 text-green font-h2">管理のポイント</h3>
-            <ul class="space-y-6 font-h3">
-              <li class="flex items-start gap-4">
-                <span class="text-green font-bold">[✓]</span>
+          <div
+            class="list-item-box border-l-4 border-yellow h-full flex flex-col justify-center"
+          >
+            <h3 class="font-bold mb-4 text-yellow font-h2">
+              一般的な利用料金の目安
+            </h3>
+            <p class="font-body-md mb-4">
+              開発者<strong class="text-yellow">5人</strong
+              >のチームが、1人あたり1日<strong class="text-yellow">100回</strong
+              >（1回平均2000トークン）利用した場合...
+            </p>
+            <p class="font-body-md">
+              <strong class="text-yellow">計算 (1ヶ月):</strong><br />
+              (1,000,000トークン/日 / 1,000,000) * $3.5 * 30日
+            </p>
+            <p class="font-h2 text-center mt-4">
+              月額 約
+              <span class="text-yellow font-bold text-gradient">$105</span>
+            </p>
+            <p class="text-slate-400 text-center font-body-sm mt-2">
+              (Gemini 1.5 Pro 入力トークン単価で計算)
+            </p>
+          </div>
+          <div class="space-y-6">
+            <h3 class="font-bold mb-4 text-green font-h2">
+              コスト超過を防ぐには
+            </h3>
+            <ul class="space-y-4 font-body-lg">
+              <li class="flex items-start gap-3">
+                <span class="text-green font-bold">[1]</span>
                 <div>
                   <strong>予算アラートを設定する:</strong>
                   GCPで上限を設定し、使いすぎを防止。<strong class="text-red"
@@ -839,80 +805,36 @@
                   >
                 </div>
               </li>
-              <li class="flex items-start gap-4">
-                <span class="text-green font-bold">[✓]</span>
+              <li class="flex items-start gap-3">
+                <span class="text-green font-bold">[2]</span>
                 <div>
                   <strong>モデルを賢く使い分ける:</strong>
                   タスクに応じて最適なモデルを選び、コストを抑制。
                 </div>
               </li>
-              <li class="flex items-start gap-4">
-                <span class="text-green font-bold">[✓]</span>
+              <li class="flex items-start gap-3">
+                <span class="text-green font-bold">[3]</span>
                 <div>
                   <strong>利用状況を監視する:</strong>
                   GCPダッシュボードで利用量を定期的に確認。
                 </div>
               </li>
             </ul>
-          </div>
-          <div class="list-item-box border-l-4 border-yellow">
-            <h3 class="font-bold mb-4 text-yellow font-h2">
-              料金シミュレーション
-            </h3>
-            <p class="font-body-md mb-4">
-              Gemini 1.5
-              Proを利用し、1日に2000トークン(約1500文字)のリクエストを100回行った場合...
-            </p>
-            <p class="font-body-md">
-              <strong class="text-yellow">計算:</strong> (200,000トークン /
-              1,000,000) * $3.5 * 30日
-            </p>
-            <p class="font-h2 text-center mt-4">
-              月額 約
-              <span class="text-yellow font-bold text-gradient">$21</span>
-            </p>
-            <p class="text-slate-400 text-center font-body-sm mt-2">
-              (入力トークン単価 $3.5/1Mトークンで計算した場合)
-            </p>
+            <div class="text-xs text-slate-400 mt-4">
+              <h4 class="font-bold text-slate-300">補足: 無料利用枠について</h4>
+              <p>
+                Gemini 1.5
+                Flashモデルには、個人での学習や小規模な試用向けの無料枠（月200万トークンまで）も存在します。
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Slide 17: Security -->
+      <!-- Slide 16: Guidelines -->
       <div class="slide">
         <h2 class="font-bold slide-header font-h1">
-          9. 組織導入ガイド: セキュリティ
-        </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div class="p-2">
-            <h3 class="font-bold mb-4 text-purple font-h2">
-              APIキーの厳格な管理
-            </h3>
-            <ul class="list-disc list-inside space-y-3 font-body-lg">
-              <li>ソースコードに含めない</li>
-              <li>GCP Secret Managerで安全に管理</li>
-              <li>キーに権限・IP制限を設定</li>
-            </ul>
-          </div>
-          <div class="p-2">
-            <h3 class="font-bold mb-4 text-purple font-h2">
-              ネットワークと権限による保護
-            </h3>
-            <ul class="list-disc list-inside space-y-3 font-body-lg">
-              <li><strong>IAM:</strong> 必要最低限の権限のみを付与</li>
-              <li>
-                <strong>VPC Service Controls:</strong>
-                承認されたネットワークからのみAPI呼び出しを許可し、データ漏洩を防止
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 18: Guidelines -->
-      <div class="slide">
-        <h2 class="font-bold slide-header font-h1">
-          10. 組織導入ガイド: 利用ガイドライン
+          8. 組織導入ガイド: 利用ガイドライン
         </h2>
         <div class="grid grid-cols-2 gap-8 flex-grow items-center">
           <div class="risk-box h-full">
@@ -938,7 +860,7 @@
         </div>
       </div>
 
-      <!-- Slide 19: Summary -->
+      <!-- Slide 17: Summary -->
       <div class="slide flex-col justify-center items-center text-center">
         <h2 class="font-bold mb-10 text-gradient font-display">まとめ</h2>
         <p class="leading-relaxed text-slate-300 font-h2">
@@ -965,7 +887,7 @@
           <path d="m15 18-6-6 6-6" />
         </svg>
       </button>
-      <div id="slideCounter" class="text-lg font-mono">1 / 19</div>
+      <div id="slideCounter" class="text-lg font-mono">1 / 17</div>
       <button id="screenshotBtn" class="nav-btn" title="Capture Screenshot">
         <svg
           xmlns="http://www.w3.org/2000/svg"

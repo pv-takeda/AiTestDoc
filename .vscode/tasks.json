@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Gemini: 選択範囲のコードを説明",
+      "type": "shell",
+      "command": "echo \"このコードを日本語で詳しく説明してください:\\n\\n${selectedText}\" | gemini",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": true,
+        "panel": "new",
+        "clear": true
+      }
+    }
+  ]
+}
