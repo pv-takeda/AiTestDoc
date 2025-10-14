@@ -13,16 +13,48 @@
       rel="stylesheet"
     />
     <style>
-      /* --- Gemini Colorful Theme Base --- */
+      /* --- Enhanced Theme Base --- */
       body {
         font-family: "Noto Sans JP", sans-serif;
-        background-color: #131316; /* Near-black background */
-        color: #e3e3e3; /* Softer white text */
+        background-color: #0a0a0f;
+        color: #e3e3e3;
         overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
+        background-image: radial-gradient(
+          circle at 1px 1px,
+          rgba(255, 255, 255, 0.05) 1px,
+          transparent 0
+        );
+        background-size: 25px 25px;
+      }
+
+      @keyframes background-pan {
+        0% {
+          background-position: 0% 0%;
+        }
+        100% {
+          background-position: 25px 25px;
+        }
+      }
+
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            135deg,
+            rgba(10, 10, 15, 0.1) 25%,
+            transparent 25%
+          ),
+          linear-gradient(225deg, rgba(10, 10, 15, 0.1) 25%, transparent 25%);
+        background-size: 50px 50px;
+        animation: background-pan 3s linear infinite;
       }
 
       h1,
@@ -37,32 +69,51 @@
       .slide-container {
         position: relative;
         width: 95vw;
-        height: calc(95vw * 9 / 16); /* 16:9 aspect ratio */
+        height: calc(95vw * 9 / 16);
         max-height: 95vh;
         max-width: calc(95vh * 16 / 9);
+        perspective: 2000px;
       }
 
-      /* --- Slide Styling --- */
+      /* --- Slide Styling & Animation --- */
       .slide {
         position: absolute;
         width: 100%;
         height: 100%;
-        background: #1e1e21; /* Dark Gray background */
-        border: 1px solid #4a4a52; /* Subtle border */
-        border-radius: 1.5rem; /* Rounded corners */
+        background: rgba(30, 30, 33, 0.7);
+        border: 1px solid rgba(74, 74, 82, 0.5);
+        border-radius: 1.5rem;
         padding: 4% 5%;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-        transform: scale(0.98);
+        transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        transform: rotateY(-30deg) scale(0.9);
+        transform-origin: right center;
         display: flex;
         flex-direction: column;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
       }
 
       .slide.active {
         opacity: 1;
         visibility: visible;
-        transform: scale(1);
+        transform: rotateY(0) scale(1);
+      }
+
+      .slide:not(.active) {
+        pointer-events: none;
+      }
+
+      /* --- Staggered Element Animation --- */
+      [data-anim] {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+      }
+      .active [data-anim] {
+        opacity: 1;
+        transform: translateY(0);
       }
 
       /* --- Navigation --- */
@@ -93,20 +144,25 @@
         align-items: center;
         transition: all 0.2s ease;
         cursor: pointer;
+        border: 1px solid transparent;
       }
       .nav-btn:hover {
         background-color: #8ab4f8;
         color: #131316;
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(138, 180, 248, 0.5);
       }
       #slideCounter {
         color: #c7c7c7;
         font-size: 1.25rem;
         font-family: "Space Grotesk", monospace;
+        min-width: 80px;
+        text-align: center;
       }
 
       /* --- Content Styling --- */
       .code-block {
-        background-color: #282a36;
+        background-color: rgba(40, 42, 54, 0.8);
         border: 1px solid #4a4a52;
         color: #f8f8f2;
         border-radius: 0.5rem;
@@ -115,7 +171,26 @@
         font-family: "Space Grotesk", "Courier New", monospace;
       }
 
-      /* --- Color Palette --- */
+      /* Syntax Highlighting */
+      .code-block .c-gray {
+        color: #6272a4;
+      } /* Comment */
+      .code-block .c-purple {
+        color: #bd93f9;
+      } /* Keyword */
+      .code-block .c-green {
+        color: #50fa7b;
+      } /* Function */
+      .code-block .c-yellow {
+        color: #f1fa8c;
+      } /* String */
+      .code-block .c-orange {
+        color: #ffb86c;
+      } /* Number */
+      .code-block .c-cyan {
+        color: #8be9fd;
+      } /* Variable, Property */
+
       .text-blue {
         color: #8ab4f8;
       }
@@ -132,72 +207,75 @@
         color: #fdd663;
       }
 
-      .border-blue {
-        border-color: #8ab4f8;
-      }
-      .border-purple {
-        border-color: #c58af9;
-      }
-      .border-red {
-        border-color: #f28b82;
-      }
-      .border-green {
-        border-color: #81c995;
-      }
-      .border-yellow {
-        border-color: #fdd663;
-      }
-
       .slide-header {
         padding-bottom: 1rem;
         margin-bottom: 2rem;
         color: #e3e3e3;
         border-bottom: 2px solid #3c4043;
+        position: relative;
       }
-
-      .info-box {
-        background: #2a2a2e;
-        border: 1px solid #4a4a52;
-        padding: 1.5rem;
-        text-align: center;
-        border-radius: 1rem;
-        transition: all 0.3s ease;
+      .slide-header::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 10%;
+        height: 2px;
+        background: linear-gradient(90deg, #8ab4f8, #c58af9);
+        transition: width 0.4s ease-out;
       }
-      .info-box:hover {
-        transform: translateY(-5px);
+      .active .slide-header::after {
+        width: 40%;
       }
 
       .list-item-box {
-        background: #2a2a2e;
+        background: rgba(42, 42, 46, 0.5);
         padding: 1rem 1.5rem;
         transition: all 0.3s ease;
-        border-radius: 0.25rem;
+        border-radius: 0.5rem;
+        border: 1px solid #4a4a52;
       }
       .list-item-box:hover {
-        background: #3a4a40;
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        border-color: #8ab4f8;
       }
 
       .risk-box {
-        border-left: 4px solid #f28b82;
+        border: 1px solid #f28b82;
         background: rgba(242, 139, 130, 0.1);
         padding: 1.5rem;
-        border-radius: 0.25rem;
+        border-radius: 1rem;
       }
       .solution-box {
-        border-left: 4px solid #81c995;
+        border: 1px solid #81c995;
         background: rgba(129, 201, 149, 0.1);
         padding: 1.5rem;
-        border-radius: 0.25rem;
+        border-radius: 1rem;
       }
 
       .text-gradient {
         background: linear-gradient(90deg, #8ab4f8, #c58af9, #fdd663);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        animation: gradient-text-flow 5s ease infinite;
+        background-size: 200% 200%;
+      }
+
+      @keyframes gradient-text-flow {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
       }
 
       .terminal-window {
-        background-color: #282a36;
+        background-color: rgba(40, 42, 54, 0.8);
         border-radius: 0.5rem;
         border: 1px solid #4a4a52;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -220,7 +298,6 @@
         justify-content: center;
       }
 
-      /* --- Responsive Font Sizes --- */
       .font-hero {
         font-size: clamp(48px, 7vw, 128px);
         line-height: 1.1;
@@ -264,61 +341,36 @@
       <!-- Slide 1: Title -->
       <div class="slide active flex justify-center items-center text-center">
         <div>
-          <h1 class="font-bold tracking-widest font-hero text-gradient">
+          <h1
+            data-anim
+            class="font-bold tracking-widest font-hero text-gradient"
+          >
             Gemini CLI
           </h1>
-          <p class="mt-4 font-space font-display text-slate-300">
+          <p
+            data-anim
+            style="--delay: 100ms"
+            class="mt-4 font-space font-display text-slate-300"
+          >
             Visual Studio Codeと連携し加速するコード開発
           </p>
-          <p class="text-slate-400 mt-12 tracking-wider font-h3">
-            // 活用テクニックと組織で導入する際の観点
+          <p
+            data-anim
+            style="--delay: 200ms"
+            class="text-slate-400 mt-12 tracking-wider font-h3"
+          >
+            // 活用術と組織で導入する際の観点
           </p>
         </div>
       </div>
 
-      <!-- Slide 2: Table of Contents -->
+      <!-- Slide 2: Self Introduction -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">目次 // CONTENTS</h2>
-        <div
-          class="flex-grow grid grid-cols-2 gap-x-12 gap-y-4 items-center font-body-lg"
-        >
-          <ol class="space-y-4 list-decimal list-inside">
-            <li><span class="text-blue">Gemini CLIとは？</span></li>
-            <li><span class="text-blue">なぜ今、CLIなのか？</span></li>
-            <li><span class="text-blue">実践: 基本的な使い方</span></li>
-            <li>
-              <span class="text-blue">VSCode連携 高速化テクニック</span>
-              <ul
-                class="list-disc list-inside ml-8 mt-2 font-body-md text-slate-300"
-              >
-                <li>思考を止めないコーディング</li>
-                <li>反復作業を撲滅</li>
-                <li>もうググらない</li>
-              </ul>
-            </li>
-            <li><span class="text-blue">活用事例: テストコード生成</span></li>
-          </ol>
-          <ol class="space-y-4 list-decimal list-inside" start="6">
-            <li><span class="text-yellow">活用の課題と対策</span></li>
-            <li>
-              <span class="text-yellow">組織導入ガイド</span>
-              <ul
-                class="list-disc list-inside ml-8 mt-2 font-body-md text-slate-300"
-              >
-                <li>コスト管理</li>
-                <li>利用ガイドライン</li>
-              </ul>
-            </li>
-            <li><span class="text-yellow">まとめ</span></li>
-          </ol>
-        </div>
-      </div>
-
-      <!-- Slide 3: Self Introduction -->
-      <div class="slide">
-        <h2 class="font-bold slide-header font-h1">SPEAKER PROFILE</h2>
+        <h2 data-anim class="font-bold slide-header font-h1">
+          SPEAKER PROFILE
+        </h2>
         <div class="grid grid-cols-5 gap-6 flex-grow items-center">
-          <div class="col-span-2 text-center">
+          <div data-anim style="--delay: 100ms" class="col-span-2 text-center">
             <img
               src="000128武田大蔵_smartHR用.png"
               alt="武田大蔵 プロフィール写真"
@@ -328,7 +380,7 @@
             <p class="text-purple mt-2 font-h3">株式会社ProVision</p>
             <p class="text-slate-300 mt-1 font-body-lg">係長 兼 TechLead</p>
           </div>
-          <div class="col-span-3 space-y-3">
+          <div data-anim style="--delay: 200ms" class="col-span-3 space-y-3">
             <div>
               <h4 class="font-bold text-purple mb-2 font-h3">// CAREER</h4>
               <ul class="space-y-1 list-inside font-body-md">
@@ -377,11 +429,46 @@
         </div>
       </div>
 
+      <!-- Slide 3: Table of Contents -->
+      <div class="slide">
+        <h2 data-anim class="font-bold slide-header font-h1">
+          目次 // CONTENTS
+        </h2>
+        <div
+          class="flex-grow grid grid-cols-2 gap-x-12 gap-y-4 items-center font-body-lg"
+        >
+          <ol
+            data-anim
+            style="--delay: 100ms"
+            class="space-y-4 list-decimal list-inside"
+          >
+            <li><span class="text-blue">Gemini CLIとは？</span></li>
+            <li><span class="text-blue">Gemini CLIのメリット</span></li>
+            <li><span class="text-blue">他のAIツールとの比較</span></li>
+            <li><span class="text-blue">実際の使い方（デモ）</span></li>
+            <li><span class="text-blue">VSCode連携 高速化テクニック</span></li>
+          </ol>
+          <ol
+            data-anim
+            style="--delay: 200ms"
+            class="space-y-4 list-decimal list-inside"
+            start="6"
+          >
+            <li><span class="text-yellow">活用事例: テストコード生成</span></li>
+            <li><span class="text-yellow">活用の課題と対策</span></li>
+            <li><span class="text-yellow">組織導入ガイド</span></li>
+            <li><span class="text-yellow">まとめ</span></li>
+          </ol>
+        </div>
+      </div>
+
       <!-- Slide 4: What is Gemini CLI? -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">1. Gemini CLIとは？</h2>
+        <h2 data-anim class="font-bold slide-header font-h1">
+          1. Gemini CLIとは？
+        </h2>
         <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div class="space-y-4">
+          <div data-anim style="--delay: 100ms" class="space-y-4">
             <p class="font-body-lg text-slate-300">
               ターミナルからGoogleのAIモデル「Gemini」を直接利用できるツールです。
             </p>
@@ -400,7 +487,7 @@
               </li>
             </ul>
           </div>
-          <div class="terminal-window">
+          <div data-anim style="--delay: 200ms" class="terminal-window">
             <div class="terminal-header"></div>
             <div class="terminal-body">
               <img
@@ -413,76 +500,155 @@
         </div>
       </div>
 
-      <!-- Slide 5: Why CLI? -->
+      <!-- Slide 5: Benefits of Gemini CLI -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">2. なぜ今、CLIなのか？</h2>
-        <p class="text-slate-400 mb-10 font-body-lg">
-          開発者のワークフローにAIをシームレスに統合
-        </p>
+        <h2 data-anim class="font-bold slide-header font-h1">
+          2. Gemini CLIのメリット
+        </h2>
         <ul
           class="space-y-6 flex-grow justify-center flex flex-col font-body-lg"
         >
-          <li class="flex items-start gap-4">
-            <span class="text-blue font-bold mt-1 font-h3">[✓]</span>
+          <li data-anim style="--delay: 100ms" class="flex items-start gap-4">
+            <span class="text-blue font-bold mt-1 font-h3">[1]</span>
             <div>
-              <strong class="text-blue">スクリプト連携:</strong>
-              シェルスクリプト等と組み合わせ、定型業務を自動化。
+              <strong class="text-blue">Claude Codeの思想:</strong>
+              開発者のワークフローを妨げず、必要な時にだけ呼び出せる「アシスタント」としての設計。
             </div>
           </li>
-          <li class="flex items-start gap-4">
-            <span class="text-green font-bold mt-1 font-h3">[✓]</span>
+          <li data-anim style="--delay: 200ms" class="flex items-start gap-4">
+            <span class="text-green font-bold mt-1 font-h3">[2]</span>
             <div>
-              <strong class="text-green">開発フロー統合:</strong> `git` や
-              `docker` と同じ感覚でAIを自然に組み込み。
+              <strong class="text-green">Googleサービス連携:</strong>
+              コマンド一つでスプレッドシートやドキュメントと連携し、データの整形やレポート作成を自動化。
             </div>
           </li>
-          <li class="flex items-start gap-4">
-            <span class="text-purple font-bold mt-1 font-h3">[✓]</span>
+          <li data-anim style="--delay: 300ms" class="flex items-start gap-4">
+            <span class="text-purple font-bold mt-1 font-h3">[3]</span>
             <div>
-              <strong class="text-purple">軽量・高速:</strong> Web
-              UI不要。ターミナルから素早くAIの力を借用。
-            </div>
-          </li>
-          <li class="flex items-start gap-4">
-            <span class="text-yellow font-bold mt-1 font-h3">[✓]</span>
-            <div>
-              <strong class="text-yellow">CUI環境での利用:</strong>
-              サーバーサイドなどGUIがない環境でも利用可能。
+              <strong class="text-purple">コスト優位性:</strong>
+              最新の高性能モデル(Gemini 1.5
+              Pro/Flash)が、他の同等性能のモデルと比較して安価に利用可能。
             </div>
           </li>
         </ul>
       </div>
 
-      <!-- Slide 6: Interactive Mode -->
+      <!-- Slide 6: Comparison -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">
-          3. 実践: 対話モードと基本的な使い方
+        <h2 data-anim class="font-bold slide-header font-h1">
+          3. 他のAIコーディングツールとの比較
+        </h2>
+        <div class="flex-grow flex flex-col justify-center">
+          <table
+            data-anim
+            style="--delay: 100ms"
+            class="w-full text-left font-body-md"
+          >
+            <thead>
+              <tr class="border-b-2 border-gray-600">
+                <th class="py-3"></th>
+                <th class="py-3 text-blue">Gemini CLI</th>
+                <th class="py-3">GitHub Copilot</th>
+                <th class="py-3">Cursor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-700">
+                <td class="py-3 font-bold">提供形態</td>
+                <td class="py-3 text-blue">
+                  <strong>CLI (コマンドライン)</strong>
+                </td>
+                <td class="py-3">IDE拡張機能</td>
+                <td class="py-3">AI統合型エディタ</td>
+              </tr>
+              <tr class="border-b border-gray-700">
+                <td class="py-3 font-bold">主な利用方法</td>
+                <td class="py-3 text-blue">
+                  ターミナルから実行、スクリプト連携
+                </td>
+                <td class="py-3">コード補完、チャット</td>
+                <td class="py-3">エディタ機能として利用</td>
+              </tr>
+              <tr>
+                <td class="py-3 font-bold">最大のメリット</td>
+                <td class="py-3 text-blue">
+                  <strong>自動化</strong>と<strong>連携性</strong>
+                </td>
+                <td class="py-3">シームレスなコード補完</td>
+                <td class="py-3">ゼロからのAIペアプログラミング</td>
+              </tr>
+            </tbody>
+          </table>
+          <div data-anim style="--delay: 200ms" class="mt-8">
+            <h3 class="font-bold text-yellow font-h3 mb-4">
+              // Gemini CLIの強み
+            </h3>
+            <ul class="space-y-3 list-disc list-inside font-body-md">
+              <li>
+                <strong class="text-yellow">連携の自由度:</strong>
+                好きなエディタや既存のワークフローを変えることなく、コマンドとしてAIを組み込める。
+              </li>
+              <li>
+                <strong class="text-yellow">強力な自動化:</strong>
+                シェルスクリプトやMakefileに組み込むことで、「コミット前の自動レビュー」や「CI/CDでのドキュメント生成」といった高度な自動化が簡単に実現できる。
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: Interactive Mode (Demo) -->
+      <div class="slide">
+        <h2 data-anim class="font-bold slide-header font-h1">
+          4. 実際の使い方 (デモ)
         </h2>
         <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div
-            class="w-full h-full bg-[#282a36] rounded-lg shadow-2xl border border-gray-600 flex flex-col"
-          >
-            <!-- Terminal Header -->
-            <div
-              class="bg-gray-700 rounded-t-lg px-4 py-2 flex items-center flex-shrink-0"
-            >
-              <span class="h-3 w-3 rounded-full bg-red mr-2"></span>
-              <span class="h-3 w-3 rounded-full bg-yellow mr-2"></span>
-              <span class="h-3 w-3 rounded-full bg-green"></span>
-              <span class="ml-4 text-gray-300 font-mono text-sm">zsh</span>
+          <div data-anim style="--delay: 100ms" class="terminal-window">
+            <div class="terminal-header">
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-3 h-3 rounded-full"
+                  style="background-color: #f28b82"
+                ></div>
+                <div
+                  class="w-3 h-3 rounded-full"
+                  style="background-color: #fdd663"
+                ></div>
+                <div
+                  class="w-3 h-3 rounded-full"
+                  style="background-color: #81c995"
+                ></div>
+              </div>
             </div>
-            <!-- Image Placeholder -->
-            <div
-              class="flex-grow rounded-b-lg p-4 flex items-center justify-center"
-            >
-              <img
-                src="xxx.png"
-                alt="Gemini CLIの対話モード"
-                class="w-full h-auto object-contain max-h-full"
-              />
+            <div class="terminal-body p-4 text-left font-code overflow-y-auto">
+              <div>
+                <p class="text-gray-400">
+                  <span>$</span>
+                  <span class="text-white"
+                    >cat server.js | gemini "結果を要約して"</span
+                  >
+                </p>
+                <div class="mt-4 text-white">
+                  <p class="font-body-md">
+                    <span class="text-yellow">✦</span> このファイルは、<span
+                      class="text-blue"
+                      >Node.js</span
+                    >と<span class="text-blue">Express</span
+                    >で商品情報を管理するシンプルなWeb APIサーバーです。
+                  </p>
+                  <p class="font-body-md mt-2">主な機能は以下の通りです。</p>
+                  <ul
+                    class="list-disc list-inside ml-4 mt-2 space-y-1 font-body-sm text-slate-300"
+                  >
+                    <li>全件取得、ID指定、名前での検索</li>
+                    <li>商品追加・更新・削除</li>
+                    <li>データはメモリ上に保存</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="space-y-6">
+          <div data-anim style="--delay: 200ms" class="space-y-6">
             <div>
               <h3 class="font-bold mb-3 text-blue font-h3">// 対話モード</h3>
               <p class="font-body-md">
@@ -496,49 +662,45 @@
               <p class="font-body-md">
                 パイプを使えば、他のコマンドの結果をGeminiに渡して、単発の処理をさせることも可能です。
               </p>
-              <p class="code-block font-code mt-2">
-                cat report.txt | gemini "この内容を3行で要約して"
-              </p>
-            </div>
-            <div>
-              <h3 class="font-bold mb-3 text-green font-h3">
-                // 画像を使った質問
-              </h3>
-              <p class="font-body-md">
-                `-p`オプションで画像を添付し、画像の内容について質問することもできます。
-              </p>
-              <p class="code-block font-code mt-2">
-                gemini "このUIコンポーネントのコードを書いて" -p ui.png
-              </p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Slide 7: VSCode Integration Intro -->
+      <!-- Slide 8: VSCode Integration Intro -->
       <div class="slide flex flex-col justify-center text-center">
-        <h2 class="font-bold text-gradient font-display">
+        <h2 data-anim class="font-bold text-gradient font-display">
           Gemini CLI x VS Code
         </h2>
-        <p class="mt-4 font-space font-h1 text-slate-300">連携で開発を加速！</p>
-        <p class="mt-8 font-body-lg text-slate-400 w-10/12 mx-auto">
+        <p
+          data-anim
+          style="--delay: 100ms"
+          class="mt-4 font-space font-h1 text-slate-300"
+        >
+          連携で開発を加速！
+        </p>
+        <p
+          data-anim
+          style="--delay: 200ms"
+          class="mt-8 font-body-lg text-slate-400 w-10/12 mx-auto"
+        >
           この強力な連携を活用し、開発速度を飛躍的に向上させるための具体的な手法を、明日から使える高速化テクニックとしてご紹介します。
         </p>
       </div>
 
-      <!-- Slide 8: Technique 1 -->
+      <!-- Slide 9: Technique 1 -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">
-          4. 高速化テクニック①: 思考を止めないコーディング
+        <h2 data-anim class="font-bold slide-header font-h1">
+          5. 高速化テクニック①: 思考を止めないコーディング
         </h2>
         <div class="grid grid-cols-3 gap-8 flex-grow items-center">
-          <div class="col-span-1 space-y-6">
+          <div data-anim style="--delay: 100ms" class="col-span-1 space-y-6">
             <div class="list-item-box border-l-4 border-blue">
               <h3 class="font-bold text-blue font-h3">
                 コンテキストの自動認識
               </h3>
               <p class="font-body-md mt-2">
-                開いているファイルや選択範囲を自動で認識。「このファイルのテストを書いて」と指示するだけ。
+                開いているファイルや選択範囲を自動で認識。「選択範囲に商品を追加して」と指示するだけ。
               </p>
             </div>
             <div class="list-item-box border-l-4 border-purple">
@@ -548,7 +710,11 @@
               </p>
             </div>
           </div>
-          <div class="col-span-2 terminal-window">
+          <div
+            data-anim
+            style="--delay: 200ms"
+            class="col-span-2 terminal-window"
+          >
             <div class="terminal-header"></div>
             <div class="terminal-body">
               <img
@@ -561,13 +727,13 @@
         </div>
       </div>
 
-      <!-- Slide 9: Technique 2 -->
+      <!-- Slide 10: Technique 2 -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">
-          4. 高速化テクニック②: 反復作業を撲滅
+        <h2 data-anim class="font-bold slide-header font-h1">
+          5. 高速化テクニック②: 反復作業を撲滅
         </h2>
         <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div class="space-y-6">
+          <div data-anim style="--delay: 100ms" class="space-y-6">
             <div class="list-item-box border-l-4 border-yellow">
               <h3 class="font-bold text-yellow font-h2">
                 VSCodeタスクで自動化
@@ -577,11 +743,11 @@
               </p>
             </div>
           </div>
-          <div class="terminal-window">
+          <div data-anim style="--delay: 200ms" class="terminal-window">
             <div class="terminal-header"></div>
             <div class="terminal-body">
               <img
-                src="vscode-tasks-json.png"
+                src="vscode-tasks-json.jpg"
                 alt="VSCodeのtasks.json"
                 class="w-full h-auto object-contain max-h-full"
               />
@@ -590,44 +756,36 @@
         </div>
       </div>
 
-      <!-- Slide 10: Technique 3 -->
+      <!-- Slide 11: VSCode Task Example -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">
-          4. 高速化テクニック③: もうググらない
+        <h2 data-anim class="font-bold slide-header font-h1">
+          5. 高速化テクニック②: 反復作業を撲滅 (詳細)
         </h2>
-        <div class="grid grid-cols-3 gap-8 flex-grow items-center">
-          <div class="col-span-1 space-y-4">
-            <div class="list-item-box border-l-4 border-blue">
-              <h3 class="font-bold text-blue font-h3">
-                コードの意図を瞬時に理解
-              </h3>
-              <p class="font-body-sm mt-2">
-                複雑なコードを選択して「このコードは何をしているの？」と質問すれば、自然言語で分かりやすく解説してくれます。
+        <div class="flex-grow flex flex-col justify-around">
+          <div data-anim style="--delay: 100ms" class="space-y-4 text-center">
+            <h3 class="font-bold text-yellow font-h2">
+              例: JSDocコメントを定型作業にする
+            </h3>
+            <p class="font-body-lg">
+              毎回同じプロンプトを入力する定型作業は、`tasks.json`に登録してしまいましょう。
+            </p>
+            <div class="flex justify-center gap-8 font-body-md mt-4">
+              <p>
+                <span class="text-blue font-bold">①</span>
+                `.vscode/tasks.json`に反復作業を登録
               </p>
-            </div>
-            <div class="list-item-box border-l-4 border-purple">
-              <h3 class="font-bold text-purple font-h3">
-                仕様書からコード生成
-              </h3>
-              <p class="font-body-sm mt-2">
-                API仕様書をインプットし、「この仕様のクライアントコードを生成して」と指示すれば、実装作業を自動化できます。
-              </p>
-            </div>
-            <div class="list-item-box border-l-4 border-green">
-              <h3 class="font-bold text-green font-h3">
-                設計の壁打ち相手として
-              </h3>
-              <p class="font-body-sm mt-2">
-                「〇〇を実現するアーキテクチャ案を出して」のように問いかけることで、アイデアの整理や技術選定の助けになります。
+              <p>
+                <span class="text-purple font-bold">②</span>
+                対象の関数を選択して`Cmd+Shift+P`で実行
               </p>
             </div>
           </div>
-          <div class="col-span-2 terminal-window">
+          <div data-anim style="--delay: 200ms" class="terminal-window h-3/5">
             <div class="terminal-header"></div>
             <div class="terminal-body">
               <img
-                src="vscode-code-explanation.png"
-                alt="VSCodeでのコード解説"
+                src="vscode-tasks-execution.png"
+                alt="VSCodeタスクの実行例"
                 class="w-full h-auto object-contain max-h-full"
               />
             </div>
@@ -635,35 +793,53 @@
         </div>
       </div>
 
-      <!-- Slide 11: Use Case - Test Gen 1 -->
+      <!-- Slide 12: Use Case - Test Gen 1 -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">
-          5. 活用事例: テストコード生成 (1/3)
+        <h2 data-anim class="font-bold slide-header font-h1">
+          6. 活用事例: テストコード生成 (1/3)
         </h2>
-        <div class="flex-grow flex flex-col justify-center text-center">
-          <div class="space-y-6">
+        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
+          <div data-anim style="--delay: 100ms" class="space-y-4">
             <h3 class="font-bold text-blue font-h2">Step 1: 生成を命令する</h3>
             <p class="font-body-lg">
-              既存のソースコード(`server.js`)をパイプで渡し、ユニットテストの生成を命令します。
+              右のようなソースコードをパイプで渡し、ユニットテストの生成を命令します。
             </p>
-            <p class="font-body-md text-slate-400">
-              `Jest`のような具体的なフレームワークを指定することで、より正確なコードが生成されやすくなります。
-            </p>
-            <p class="code-block font-code mt-4 w-10/12 mx-auto text-left">
+            <p class="code-block font-code mt-4">
               cat server.js | gemini "Jestでユニットテストを書いて" >
               server.test.js
             </p>
           </div>
+          <div data-anim style="--delay: 200ms" class="code-block text-sm">
+            <pre><code><span class="c-gray">// GET /api/products - Get all products (with search)</span>
+<span class="c-green">app.get</span>(<span class="c-yellow">'/api/products'</span>, (<span class="c-cyan">req</span>, <span class="c-cyan">res</span>) => {
+  <span class="c-purple">const</span> { <span class="c-cyan">name</span> } = <span class="c-cyan">req.query</span>;
+  <span class="c-purple">if</span> (<span class="c-cyan">name</span>) {
+    <span class="c-purple">const</span> <span class="c-cyan">filteredProducts</span> = <span class="c-cyan">products</span>.<span class="c-green">filter</span>(<span class="c-cyan">p</span> => <span class="c-cyan">p.name</span>.<span class="c-green">includes</span>(<span class="c-cyan">name</span>));
+    <span class="c-purple">return</span> <span class="c-cyan">res</span>.<span class="c-green">json</span>(<span class="c-cyan">filteredProducts</span>);
+  }
+  <span class="c-cyan">res</span>.<span class="c-green">json</span>(<span class="c-cyan">products</span>);
+});
+
+<span class="c-gray">// GET /api/products/:id - Get a single product</span>
+<span class="c-green">app.get</span>(<span class="c-yellow">'/api/products/:id'</span>, (<span class="c-cyan">req</span>, <span class="c-cyan">res</span>) => {
+  <span class="c-purple">const</span> <span class="c-cyan">product</span> = <span class="c-cyan">products</span>.<span class="c-green">find</span>(<span class="c-cyan">p</span> => <span class="c-cyan">p.id</span> === <span class="c-green">parseInt</span>(<span class="c-cyan">req.params.id</span>));
+  <span class="c-purple">if</span> (<span class="c-cyan">product</span>) {
+    <span class="c-cyan">res</span>.<span class="c-green">json</span>(<span class="c-cyan">product</span>);
+  } <span class="c-purple">else</span> {
+    <span class="c-cyan">res</span>.<span class="c-green">status</span>(<span class="c-orange">404</span>).<span class="c-green">send</span>(<span class="c-yellow">'Product not found'</span>);
+  }
+});</code></pre>
+          </div>
         </div>
       </div>
 
-      <!-- Slide 12: Use Case - Test Gen 2 -->
+      <!-- Slide 13: Use Case - Test Gen 2 -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">
-          5. 活用事例: テストコード生成 (2/3)
+        <h2 data-anim class="font-bold slide-header font-h1">
+          6. 活用事例: テストコード生成 (2/3)
         </h2>
         <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div class="space-y-6">
+          <div data-anim style="--delay: 100ms" class="space-y-6">
             <h3 class="font-bold text-purple font-h2">
               Step 2: テストファイルが生成される
             </h3>
@@ -674,7 +850,7 @@
               基本的なエンドポイントの疎通確認や、正常系・異常系のテストケースが含まれており、テスト作成の土台として非常に有用です。
             </p>
           </div>
-          <div class="terminal-window">
+          <div data-anim style="--delay: 200ms" class="terminal-window">
             <div class="terminal-header"></div>
             <div class="terminal-body">
               <img
@@ -687,13 +863,13 @@
         </div>
       </div>
 
-      <!-- Slide 13: Use Case - Test Gen 3 -->
+      <!-- Slide 14: Use Case - Test Gen 3 -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">
-          5. 活用事例: テストコード生成 (3/3)
+        <h2 data-anim class="font-bold slide-header font-h1">
+          6. 活用事例: テストコード生成 (3/3)
         </h2>
         <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div class="space-y-6">
+          <div data-anim style="--delay: 100ms" class="space-y-6">
             <h3 class="font-bold text-green font-h2">
               Step 3: テストを実行する
             </h3>
@@ -706,7 +882,7 @@
             </p>
             <p class="code-block font-code mt-2">npm test</p>
           </div>
-          <div class="terminal-window">
+          <div data-anim style="--delay: 200ms" class="terminal-window">
             <div class="terminal-header"></div>
             <div class="terminal-body">
               <img
@@ -719,28 +895,36 @@
         </div>
       </div>
 
-      <!-- Slide 14: Challenges -->
+      <!-- Slide 15: Challenges -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">6. 活用の課題と対策</h2>
+        <h2 data-anim class="font-bold slide-header font-h1">
+          7. 活用の課題と対策
+        </h2>
         <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div class="risk-box h-full">
+          <div data-anim style="--delay: 100ms" class="risk-box h-full">
             <h3 class="font-bold mb-4 text-red font-h2">// 課題点 // Risks</h3>
             <ul class="space-y-4 list-disc list-inside font-body-md">
               <li>
-                <strong>ハルシネーション:</strong>
-                事実に反する情報や動作しないコードを生成する可能性。
+                <strong>ハルシネーション</strong>
+                <p class="font-body-sm text-slate-400 ml-4">
+                  例: 存在しない関数を「あります」と答える
+                </p>
               </li>
               <li>
-                <strong>コンテキスト長の限界:</strong>
-                一度に扱えるテキスト量に上限がある。
+                <strong>コンテキスト長の限界</strong>
+                <p class="font-body-sm text-slate-400 ml-4">
+                  例: 長大なコードを渡すと末尾の処理で冒頭を忘れる
+                </p>
               </li>
               <li>
-                <strong>セキュリティリスク:</strong>
-                機密情報やAPIキーを不用意に送信する危険性。
+                <strong>セキュリティリスク</strong>
+                <p class="font-body-sm text-slate-400 ml-4">
+                  例: DB接続文字列やAPIキーをAIに送信してしまう
+                </p>
               </li>
             </ul>
           </div>
-          <div class="solution-box h-full">
+          <div data-anim style="--delay: 200ms" class="solution-box h-full">
             <h3 class="font-bold mb-4 text-green font-h2">
               // 対策 // Solutions
             </h3>
@@ -762,13 +946,15 @@
         </div>
       </div>
 
-      <!-- Slide 15: Cost -->
+      <!-- Slide 16: Cost -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">
-          7. 組織導入ガイド: コスト管理
+        <h2 data-anim class="font-bold slide-header font-h1">
+          8. 組織導入ガイド: コスト管理
         </h2>
         <div class="grid grid-cols-2 gap-8 flex-grow items-center">
           <div
+            data-anim
+            style="--delay: 100ms"
             class="list-item-box border-l-4 border-yellow h-full flex flex-col justify-center"
           >
             <h3 class="font-bold mb-4 text-yellow font-h2">
@@ -791,7 +977,7 @@
               (Gemini 1.5 Pro 入力トークン単価で計算)
             </p>
           </div>
-          <div class="space-y-6">
+          <div data-anim style="--delay: 200ms" class="space-y-6">
             <h3 class="font-bold mb-4 text-green font-h2">
               コスト超過を防ぐには
             </h3>
@@ -831,25 +1017,26 @@
         </div>
       </div>
 
-      <!-- Slide 16: Guidelines -->
+      <!-- Slide 17: Guidelines -->
       <div class="slide">
-        <h2 class="font-bold slide-header font-h1">
-          8. 組織導入ガイド: 利用ガイドライン
+        <h2 data-anim class="font-bold slide-header font-h1">
+          9. 組織導入ガイド: 利用ガイドライン
         </h2>
         <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div class="risk-box h-full">
+          <div data-anim style="--delay: 100ms" class="risk-box h-full">
             <h3 class="font-bold mb-4 text-red font-h2">
               // 禁止事項 // DO NOT
             </h3>
             <ul class="list-disc list-inside space-y-3 font-body-lg">
               <li>個人情報(PII)の入力</li>
               <li>顧客の機密情報・未公開情報の入力</li>
-              <li>パスワードやAPIキーの入力</li>
+              <li>パスワードやAPIキーの直接入力</li>
             </ul>
           </div>
-          <div class="solution-box h-full">
+          <div data-anim style="--delay: 200ms" class="solution-box h-full">
             <h3 class="font-bold mb-4 text-green font-h2">// 推奨事項 // DO</h3>
             <ul class="list-disc list-inside space-y-3 font-body-lg">
+              <li>機密情報は環境変数やGCP Secret Managerを利用する</li>
               <li>生成コードは必ずテストとレビューを行う</li>
               <li>重要な情報はファクトチェックを行う</li>
               <li>定型プロンプトはチーム内で共有する</li>
@@ -859,12 +1046,40 @@
         </div>
       </div>
 
-      <!-- Slide 17: Summary -->
+      <!-- Slide 18: Summary -->
       <div class="slide flex-col justify-center items-center text-center">
-        <h2 class="font-bold mb-10 text-gradient font-display">まとめ</h2>
-        <p class="leading-relaxed text-slate-300 font-h2">
-          Gemini CLIは、開発者の生産性を飛躍的に向上させる強力なツールです。<br />
+        <h2 data-anim class="font-bold mb-10 text-gradient font-display">
+          まとめ
+        </h2>
+        <p
+          data-anim
+          style="--delay: 100ms"
+          class="leading-relaxed text-slate-300 font-h2"
+        >
+          Gemini CLIは、開発者の生産性を飛躍的に向上させる強力なツールです。
+        </p>
+        <p
+          data-anim
+          style="--delay: 200ms"
+          class="leading-relaxed text-slate-300 font-h2 mt-4"
+        >
           適切なガイドラインの下で活用し、開発ワークフローを革新しましょう。
+        </p>
+      </div>
+
+      <!-- Slide 19: Made with Gemini -->
+      <div class="slide flex-col justify-center items-center text-center">
+        <h2 data-anim class="font-bold mb-10 text-gradient font-display">
+          ちなみに...
+        </h2>
+        <p
+          data-anim
+          style="--delay: 100ms"
+          class="leading-relaxed text-slate-300 font-h2"
+        >
+          このスライド資料、実は<br />
+          <span class="text-yellow font-bold">Geminiを使ってHTMLとCSSで</span
+          >作成しました！
         </p>
       </div>
     </div>
@@ -886,7 +1101,7 @@
           <path d="m15 18-6-6 6-6" />
         </svg>
       </button>
-      <div id="slideCounter" class="text-lg font-mono">1 / 17</div>
+      <div id="slideCounter" class="text-lg font-mono">1 / 19</div>
       <button id="screenshotBtn" class="nav-btn" title="Capture Screenshot">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -934,6 +1149,23 @@
         function showSlide(index) {
           slides.forEach((slide, i) => {
             slide.classList.toggle("active", i === index);
+
+            const animatableElements = slide.querySelectorAll("[data-anim]");
+            if (slide.classList.contains("active")) {
+              animatableElements.forEach((el, j) => {
+                const delay =
+                  el.style.getPropertyValue("--delay") || `${j * 100}ms`;
+                setTimeout(() => {
+                  el.style.opacity = "1";
+                  el.style.transform = "translateY(0)";
+                }, parseFloat(delay));
+              });
+            } else {
+              animatableElements.forEach((el) => {
+                el.style.opacity = "0";
+                el.style.transform = "translateY(20px)";
+              });
+            }
           });
           slideCounter.textContent = `${index + 1} / ${slides.length}`;
         }
@@ -957,8 +1189,8 @@
 
           try {
             const canvas = await html2canvas(activeSlide, {
-              backgroundColor: "#131316", // Ensure background is captured
-              scale: 2, // Higher resolution
+              backgroundColor: "#0A0A0F",
+              scale: 2,
             });
             const link = document.createElement("a");
             link.download = `gemini-cli-slide-${slideNumber}.png`;
