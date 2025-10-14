@@ -519,8 +519,8 @@
           <li data-anim style="--delay: 100ms" class="flex items-start gap-4">
             <span class="text-blue font-bold mt-1 font-h3">[1]</span>
             <div>
-              <strong class="text-blue">ワークフローを妨げない設計思想:</strong>
-              開発者の作業を中断せず、必要な時にだけ呼び出せる「アシスタント」としての設計。
+              <strong class="text-blue">Claude Codeの思想:</strong>
+              開発者のワークフローを妨げず、必要な時にだけ呼び出せる「アシスタント」としての設計。
             </div>
           </li>
           <li data-anim style="--delay: 200ms" class="flex items-start gap-4">
@@ -740,8 +740,8 @@
         <h2 data-anim class="font-bold slide-header font-h1">
           5. 高速化テクニック②: 反復作業を撲滅
         </h2>
-        <div class="grid grid-cols-3 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="col-span-1 space-y-6">
+        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
+          <div data-anim style="--delay: 100ms" class="space-y-6">
             <div class="list-item-box border-l-4 border-yellow">
               <h3 class="font-bold text-yellow font-h2">
                 VSCodeタスクで自動化
@@ -754,16 +754,27 @@
           <div
             data-anim
             style="--delay: 200ms"
-            class="col-span-2 terminal-window"
+            class="code-block text-sm h-full flex flex-col justify-center"
           >
-            <div class="terminal-header"></div>
-            <div class="terminal-body">
-              <img
-                src="vscode-tasks-json.jpg"
-                alt="VSCodeのtasks.json"
-                class="w-full h-auto object-contain max-h-full"
-              />
-            </div>
+            <pre><code>{
+  <span class="c-yellow">"version"</span>: <span class="c-yellow">"2.0.0"</span>,
+  <span class="c-yellow">"tasks"</span>: [
+    {
+      <span class="c-yellow">"label"</span>: <span class="c-yellow">"Gemini: 選択範囲のコードを説明"</span>,
+      <span class="c-yellow">"type"</span>: <span class="c-yellow">"shell"</span>,
+      <span class="c-yellow">"command"</span>: <span class="c-yellow">"echo \"このコードを日本語で詳しく説明してください:\\n\\n${selectedText}\" | gemini"</span>,
+      <span class="c-yellow">"problemMatcher"</span>: [],
+      <span class="c-yellow">"presentation"</span>: {
+        <span class="c-yellow">"echo"</span>: <span class="c-purple">true</span>,
+        <span class="c-yellow">"reveal"</span>: <span class="c-yellow">"always"</span>,
+        <span class="c-yellow">"focus"</span>: <span class="c-purple">true</span>,
+        <span class="c-yellow">"panel"</span>: <span class="c-yellow">"new"</span>,
+        <span class="c-yellow">"clear"</span>: <span class="c-purple">true</span>
+      }
+    }
+  ]
+}
+</code></pre>
           </div>
         </div>
       </div>
@@ -1234,27 +1245,26 @@
           style="--delay: 100ms"
           class="leading-relaxed text-slate-300 font-h2"
         >
-          Gemini CLIは、開発者の生産性を飛躍的に</br>向上させる強力なツールです。
+          Gemini CLIは、開発者の生産性を飛躍的に向上させる強力なツールです。
         </p>
         <p
           data-anim
           style="--delay: 200ms"
           class="leading-relaxed text-slate-300 font-h2 mt-4"
         >
-          適切なガイドラインの下で活用し、<br>開発ワークフローを革新しましょう。
+          適切なガイドラインの下で活用し、開発ワークフローを革新しましょう。
         </p>
       </div>
 
       <div class="slide flex-col justify-center items-center text-center">
         <h2 data-anim class="font-bold mb-10 text-gradient font-display">
-          ちなみに...
+          このスライド資料、実は...
         </h2>
         <p
           data-anim
           style="--delay: 100ms"
           class="leading-relaxed text-slate-300 font-h2"
         >
-          このスライド資料、実は<br />
           <span class="text-yellow font-bold">Geminiを使ってHTMLとCSSで</span
           >作成しました！
         </p>
