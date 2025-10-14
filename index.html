@@ -447,14 +447,22 @@
             <li><span class="text-blue">他のAIツールとの比較</span></li>
             <li><span class="text-blue">実際の使い方（デモ）</span></li>
             <li><span class="text-blue">VSCode連携 高速化テクニック</span></li>
+            <li>
+              <span class="text-blue">活用事例</span>
+              <ul
+                class="list-disc list-inside ml-8 mt-2 font-body-md text-slate-300"
+              >
+                <li>テストコード生成</li>
+                <li>ログ監視と要約</li>
+              </ul>
+            </li>
           </ol>
           <ol
             data-anim
             style="--delay: 200ms"
             class="space-y-4 list-decimal list-inside"
-            start="6"
+            start="7"
           >
-            <li><span class="text-yellow">活用事例: テストコード生成</span></li>
             <li><span class="text-yellow">活用の課題と対策</span></li>
             <li><span class="text-yellow">組織導入ガイド</span></li>
             <li><span class="text-yellow">まとめ</span></li>
@@ -549,7 +557,7 @@
                 <th class="py-3"></th>
                 <th class="py-3 text-blue">Gemini CLI</th>
                 <th class="py-3">GitHub Copilot</th>
-                <th class="py-3">Claude</th>
+                <th class="py-3">Cursor</th>
               </tr>
             </thead>
             <tbody>
@@ -559,7 +567,7 @@
                   <strong>CLI (コマンドライン)</strong>
                 </td>
                 <td class="py-3">IDE拡張機能</td>
-                <td class="py-3">Web/API/拡張機能</td>
+                <td class="py-3">AI統合型エディタ</td>
               </tr>
               <tr class="border-b border-gray-700">
                 <td class="py-3 font-bold">主な利用方法</td>
@@ -567,7 +575,7 @@
                   ターミナルから実行、スクリプト連携
                 </td>
                 <td class="py-3">コード補完、チャット</td>
-                <td class="py-3">チャットでの対話</td>
+                <td class="py-3">エディタ機能として利用</td>
               </tr>
               <tr>
                 <td class="py-3 font-bold">最大のメリット</td>
@@ -575,7 +583,7 @@
                   <strong>自動化</strong>と<strong>連携性</strong>
                 </td>
                 <td class="py-3">シームレスなコード補完</td>
-                <td class="py-3">長文・複数ファイルの読解</td>
+                <td class="py-3">ゼロからのAIペアプログラミング</td>
               </tr>
             </tbody>
           </table>
@@ -895,7 +903,163 @@
         </div>
       </div>
 
-      <!-- Slide 15: Challenges -->
+      <div class="slide">
+        <h2 data-anim class="font-bold slide-header font-h1">
+          6. 活用事例: ログ監視と要約 (1/3)
+        </h2>
+        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
+          <div data-anim style="--delay: 100ms" class="space-y-6">
+            <h3 class="font-bold text-red font-h2">問題提起: ログの海</h3>
+            <p class="font-body-lg">
+              サーバーから出力される大量のシステムログ。この中から手動で重要なエラーや警告を見つけ出すのは非常に困難な作業です。
+            </p>
+          </div>
+          <div
+            data-anim
+            style="--delay: 200ms"
+            class="code-block text-xs h-full overflow-y-auto"
+          >
+            <pre><code><span class="text-blue">INFO</span>: 2025-10-14 13:05:01 - [main] Application starting up...
+<span class="text-blue">INFO</span>: 2025-10-14 13:05:02 - [main] Configuration loaded from /etc/app/config.yml
+<span class="text-blue">INFO</span>: 2025-10-14 13:05:03 - [main] Database connection pool initialized for postgresql://db-main.internal:5432
+<span class="text-blue">INFO</span>: 2025-10-14 13:05:03 - [main] Redis cache client connected to redis.internal:6379
+<span class="text-blue">INFO</span>: 2025-10-14 13:05:04 - [main] Starting web server on 0.0.0.0:8080
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:06:10 - [worker-1] Health check endpoint /health called from 192.168.1.100
+<span class="text-blue">INFO</span>: 2025-10-14 13:06:15 - [http-nio-8080-exec-1] User authentication request for user 'alice'.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:06:15 - [http-nio-8080-exec-1] Authenticating user 'alice' against LDAP server.
+<span class="text-blue">INFO</span>: 2025-10-14 13:06:16 - [http-nio-8080-exec-1] User 'alice' logged in successfully. Session ID: fa21b8c9
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:06:20 - [http-nio-8080-exec-2] GET /api/v1/dashboard request from user 'alice'.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:06:21 - [worker-3] Fetching dashboard data for user_id=101.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:06:22 - [worker-3] SQL Query: SELECT * FROM user_widgets WHERE user_id = 101;
+<span class="text-blue">INFO</span>: 2025-10-14 13:07:05 - [http-nio-8080-exec-3] User authentication request for user 'bob'.
+<span class="text-blue">INFO</span>: 2025-10-14 13:07:06 - [http-nio-8080-exec-3] User 'bob' logged in successfully. Session ID: 3e45c1aa
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:07:10 - [http-nio-8080-exec-4] POST /api/v1/reports request from user 'bob'.
+<span class="text-blue">INFO</span>: 2025-10-14 13:07:11 - [worker-2] Generating new report for user 'bob'.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:07:15 - [worker-2] Report generation task #451 started.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:07:30 - [worker-2] Data aggregation complete for report #451.
+<span class="text-blue">INFO</span>: 2025-10-14 13:07:35 - [worker-2] Report #451 generated successfully.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:08:01 - [worker-1] Health check endpoint /health called from 192.168.1.100
+<span class="text-yellow">WARNING</span>: 2025-10-14 13:08:45 - [worker-3] High memory usage detected: 88% used.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:09:00 - [http-nio-8080-exec-5] GET /api/v1/users/search?q=test request from user 'alice'.
+<span class="text-blue">INFO</span>: 2025-10-14 13:09:01 - [worker-1] User search performed with query: 'test'.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:10:00 - [worker-4] Starting scheduled job: CleanupTemporaryFiles.
+<span class="text-blue">INFO</span>: 2025-10-14 13:10:01 - [worker-4] Deleted 152 temporary files from /tmp.
+<span class="text-blue">INFO</span>: 2025-10-14 13:11:00 - [http-nio-8080-exec-6] User authentication request for user 'charlie'.
+<span class="text-red">ERROR</span>: 2025-10-14 13:11:01 - [http-nio-8080-exec-6] Authentication failed for user 'charlie': Invalid credentials provided.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:11:05 - [http-nio-8080-exec-7] GET /api/v1/products/12345 request from user 'alice'.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:11:06 - [worker-2] Fetching product details from cache for product_id=12345.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:11:06 - [worker-2] Cache miss for product_id=12345. Fetching from database.
+<span class="text-red">ERROR</span>: 2025-10-14 13:11:10 - [worker-2] Failed to connect to database: Connection timed out after 3001ms.
+<span class="text-blue">INFO</span>: 2025-10-14 13:11:11 - [worker-2] Retrying database connection... (Attempt 1/3)
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:11:15 - [worker-2] Database connection re-established successfully.
+<span class="text-blue">INFO</span>: 2025-10-14 13:11:16 - [worker-2] Successfully fetched product details for product_id=12345.
+<span class="text-yellow">WARNING</span>: 2025-10-14 13:12:30 - [http-nio-8080-exec-1] API response time for /api/v1/products/12345 is high: 3500ms.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:13:01 - [worker-1] Health check endpoint /health called from 192.168.1.100
+<span class="text-blue">INFO</span>: 2025-10-14 13:14:05 - [http-nio-8080-exec-2] User 'alice' logged out.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:15:00 - [worker-3] Processing data batch #882.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:15:05 - [worker-3] Batch #882 contains 500 records.
+<span class="text-red">ERROR</span>: 2025-10-14 13:15:10 - [worker-3] NullPointerException at com.example.Processor.run(Processor.java:152) while processing record #882-231.
+<span class="text-blue">INFO</span>: 2025-10-14 13:15:11 - [worker-3] Skipping corrupted record #882-231.
+<span class="text-purple">DEBUG</span>: 2025-10-14 13:15:30 - [worker-3] Data processing for batch #882 complete.
+<span class="text-yellow">WARNING</span>: 2025-10-14 13:16:00 - [main] Disk space is running low on /var/log. 95% used. Log rotation might be required.
+                    </code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 data-anim class="font-bold slide-header font-h1">
+          6. 活用事例: ログ監視と要約 (2/3)
+        </h2>
+        <div class="flex-grow flex flex-col justify-center text-center">
+          <div data-anim class="space-y-4">
+            <h3 class="font-bold text-blue font-h2">
+              Step 1: パイプで連携し要約を依頼
+            </h3>
+            <p class="font-body-lg">
+              ログ出力をパイプ(|)で直接Geminiに渡し、エラーの抽出と原因・対処法の説明を依頼します。
+            </p>
+            <p class="code-block font-code mt-4 text-sm mx-auto w-11/12">
+              journalctl -n 50 | gemini gen
+              "このシステムログの中からエラー(error)や警告(warning)に関する行だけを抜き出して。何が起きているか、考えられる原因と対処法を箇条書きで簡潔に日本語で説明して"
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide">
+        <h2 data-anim class="font-bold slide-header font-h1">
+          6. 活用事例: ログ監視と要約 (3/3)
+        </h2>
+        <div class="grid grid-cols-5 gap-8 flex-grow items-center">
+          <div data-anim style="--delay: 100ms" class="col-span-2 space-y-6">
+            <h3 class="font-bold text-green font-h2">
+              Step 2: 要約レポートを確認
+            </h3>
+            <p class="font-body-lg">
+              Geminiがログを解析し、人間が理解しやすい形で整理されたレポートを出力します。
+            </p>
+            <p class="font-body-md text-slate-400">
+              「認証エラーが多発」「ディスク容量の警告」など、重要なインシデントを即座に把握できます。
+            </p>
+          </div>
+          <div
+            data-anim
+            style="--delay: 200ms"
+            class="col-span-3 terminal-window"
+          >
+            <div class="terminal-header"></div>
+            <div
+              class="terminal-body p-4 text-left font-code text-xs overflow-y-auto"
+            >
+              <div>
+                <p>
+                  <span class="text-green">ℹ</span> Update successful! The new
+                  version will be used on your next run.
+                </p>
+                <h4 class="font-bold text-yellow mt-4">発生している事象</h4>
+                <ul class="list-disc list-inside ml-4 text-slate-300">
+                  <li>
+                    認証エラー:
+                    <code class="text-red text-xs"
+                      >Authentication failed for user 'charlie'</code
+                    >
+                  </li>
+                  <li>
+                    データベース接続エラー:
+                    <code class="text-red text-xs">Connection timed out</code>
+                  </li>
+                  <li>
+                    アプリケーションエラー:
+                    <code class="text-red text-xs">NullPointerException</code>
+                  </li>
+                </ul>
+                <h4 class="font-bold text-yellow mt-4">
+                  考えられる原因と対処法
+                </h4>
+                <ul class="list-disc list-inside ml-4 text-slate-300 space-y-2">
+                  <li>
+                    <strong class="text-blue">認証エラー:</strong><br />原因:
+                    ユーザー 'charlie' が誤った認証情報...<br />対処法:
+                    'charlie' に正しい認証情報を確認...
+                  </li>
+                  <li>
+                    <strong class="text-blue">DB接続エラー:</strong><br />原因:
+                    DBサーバーへの接続がタイムアウト...<br />対処法:
+                    DBサーバーの死活監視、ネットワーク...
+                  </li>
+                  <li>
+                    <strong class="text-blue">アプリエラー:</strong><br />原因:
+                    データ処理中に予期せず null 値が参照...<br />対処法:
+                    開発チームにコードレビューとデータ調査を依頼...
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="slide">
         <h2 data-anim class="font-bold slide-header font-h1">
           7. 活用の課題と対策
@@ -946,7 +1110,6 @@
         </div>
       </div>
 
-      <!-- Slide 16: Cost -->
       <div class="slide">
         <h2 data-anim class="font-bold slide-header font-h1">
           8. 組織導入ガイド: コスト管理
@@ -1017,7 +1180,6 @@
         </div>
       </div>
 
-      <!-- Slide 17: Guidelines -->
       <div class="slide">
         <h2 data-anim class="font-bold slide-header font-h1">
           9. 組織導入ガイド: 利用ガイドライン
@@ -1046,7 +1208,6 @@
         </div>
       </div>
 
-      <!-- Slide 18: Summary -->
       <div class="slide flex-col justify-center items-center text-center">
         <h2 data-anim class="font-bold mb-10 text-gradient font-display">
           まとめ
@@ -1067,7 +1228,6 @@
         </p>
       </div>
 
-      <!-- Slide 19: Made with Gemini -->
       <div class="slide flex-col justify-center items-center text-center">
         <h2 data-anim class="font-bold mb-10 text-gradient font-display">
           ちなみに...
@@ -1101,7 +1261,7 @@
           <path d="m15 18-6-6 6-6" />
         </svg>
       </button>
-      <div id="slideCounter" class="text-lg font-mono">1 / 19</div>
+      <div id="slideCounter" class="text-lg font-mono">1 / 22</div>
       <button id="screenshotBtn" class="nav-btn" title="Capture Screenshot">
         <svg
           xmlns="http://www.w3.org/2000/svg"
