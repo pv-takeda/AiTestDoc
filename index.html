@@ -519,8 +519,8 @@
           <li data-anim style="--delay: 100ms" class="flex items-start gap-4">
             <span class="text-blue font-bold mt-1 font-h3">[1]</span>
             <div>
-              <strong class="text-blue">Claude Codeの思想:</strong>
-              開発者のワークフローを妨げず、必要な時にだけ呼び出せる「アシスタント」としての設計。
+              <strong class="text-blue">ワークフローを妨げない設計思想:</strong>
+              開発者の作業を中断せず、必要な時にだけ呼び出せる「アシスタント」としての設計。
             </div>
           </li>
           <li data-anim style="--delay: 200ms" class="flex items-start gap-4">
@@ -557,7 +557,7 @@
                 <th class="py-3"></th>
                 <th class="py-3 text-blue">Gemini CLI</th>
                 <th class="py-3">GitHub Copilot</th>
-                <th class="py-3">Claude</th>
+                <th class="py-3">Cursor</th>
               </tr>
             </thead>
             <tbody>
@@ -567,7 +567,7 @@
                   <strong>CLI (コマンドライン)</strong>
                 </td>
                 <td class="py-3">IDE拡張機能</td>
-                <td class="py-3">Web/API/拡張機能</td>
+                <td class="py-3">AI統合型エディタ</td>
               </tr>
               <tr class="border-b border-gray-700">
                 <td class="py-3 font-bold">主な利用方法</td>
@@ -575,7 +575,7 @@
                   ターミナルから実行、スクリプト連携
                 </td>
                 <td class="py-3">コード補完、チャット</td>
-                <td class="py-3">チャットでの対話</td>
+                <td class="py-3">エディタ機能として利用</td>
               </tr>
               <tr>
                 <td class="py-3 font-bold">最大のメリット</td>
@@ -583,7 +583,7 @@
                   <strong>自動化</strong>と<strong>連携性</strong>
                 </td>
                 <td class="py-3">シームレスなコード補完</td>
-                <td class="py-3">長文・複数ファイルの読解</td>
+                <td class="py-3">ゼロからのAIペアプログラミング</td>
               </tr>
             </tbody>
           </table>
@@ -1191,10 +1191,25 @@
             <h3 class="font-bold mb-4 text-red font-h2">
               // 禁止事項 // DO NOT
             </h3>
-            <ul class="list-disc list-inside space-y-3 font-body-lg">
-              <li>個人情報(PII)の入力</li>
-              <li>顧客の機密情報・未公開情報の入力</li>
-              <li>パスワードやAPIキーの直接入力</li>
+            <ul class="space-y-3 font-body-lg list-disc list-inside">
+              <li>
+                個人情報(PII)の入力
+                <p class="font-body-sm text-slate-400 ml-4">
+                  例：氏名、住所、電話番号などをプロンプトに含めない
+                </p>
+              </li>
+              <li>
+                顧客の機密情報・未公開情報の入力
+                <p class="font-body-sm text-slate-400 ml-4">
+                  例：顧客データや、未リリースの製品情報など
+                </p>
+              </li>
+              <li>
+                パスワードやAPIキーの直接入力
+                <p class="font-body-sm text-slate-400 ml-4">
+                  例：.envファイルの内容をそのまま貼り付けない
+                </p>
+              </li>
             </ul>
           </div>
           <div data-anim style="--delay: 200ms" class="solution-box h-full">
