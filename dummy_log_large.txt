@@ -1,0 +1,146 @@
+INFO: 2025-10-14 13:05:01 - [main] Application starting up...
+INFO: 2025-10-14 13:05:02 - [main] Configuration loaded from /etc/app/config.yml
+INFO: 2025-10-14 13:05:03 - [main] Database connection pool initialized for postgresql://db-main.internal:5432
+INFO: 2025-10-14 13:05:03 - [main] Redis cache client connected to redis.internal:6379
+INFO: 2025-10-14 13:05:04 - [main] Starting web server on 0.0.0.0:8080
+DEBUG: 2025-10-14 13:06:10 - [worker-1] Health check endpoint /health called from 192.168.1.100
+INFO: 2025-10-14 13:06:15 - [http-nio-8080-exec-1] User authentication request for user 'alice'.
+DEBUG: 2025-10-14 13:06:15 - [http-nio-8080-exec-1] Authenticating user 'alice' against LDAP server.
+INFO: 2025-10-14 13:06:16 - [http-nio-8080-exec-1] User 'alice' logged in successfully. Session ID: fa21b8c9
+DEBUG: 2025-10-14 13:06:20 - [http-nio-8080-exec-2] GET /api/v1/dashboard request from user 'alice'.
+DEBUG: 2025-10-14 13:06:21 - [worker-3] Fetching dashboard data for user_id=101.
+DEBUG: 2025-10-14 13:06:22 - [worker-3] SQL Query: SELECT _ FROM user_widgets WHERE user_id = 101;
+INFO: 2025-10-14 13:07:05 - [http-nio-8080-exec-3] User authentication request for user 'bob'.
+INFO: 2025-10-14 13:07:06 - [http-nio-8080-exec-3] User 'bob' logged in successfully. Session ID: 3e45c1aa
+DEBUG: 2025-10-14 13:07:10 - [http-nio-8080-exec-4] POST /api/v1/reports request from user 'bob'.
+INFO: 2025-10-14 13:07:11 - [worker-2] Generating new report for user 'bob'.
+DEBUG: 2025-10-14 13:07:15 - [worker-2] Report generation task #451 started.
+DEBUG: 2025-10-14 13:07:30 - [worker-2] Data aggregation complete for report #451.
+INFO: 2025-10-14 13:07:35 - [worker-2] Report #451 generated successfully.
+DEBUG: 2025-10-14 13:08:01 - [worker-1] Health check endpoint /health called from 192.168.1.100
+WARNING: 2025-10-14 13:08:45 - [worker-3] High memory usage detected: 88% used.
+DEBUG: 2025-10-14 13:09:00 - [http-nio-8080-exec-5] GET /api/v1/users/search?q=test request from user 'alice'.
+INFO: 2025-10-14 13:09:01 - [worker-1] User search performed with query: 'test'.
+DEBUG: 2025-10-14 13:10:00 - [worker-4] Starting scheduled job: CleanupTemporaryFiles.
+INFO: 2025-10-14 13:10:01 - [worker-4] Deleted 152 temporary files from /tmp.
+INFO: 2025-10-14 13:11:00 - [http-nio-8080-exec-6] User authentication request for user 'charlie'.
+ERROR: 2025-10-14 13:11:01 - [http-nio-8080-exec-6] Authentication failed for user 'charlie': Invalid credentials provided.
+DEBUG: 2025-10-14 13:11:05 - [http-nio-8080-exec-7] GET /api/v1/products/12345 request from user 'alice'.
+DEBUG: 2025-10-14 13:11:06 - [worker-2] Fetching product details from cache for product_id=12345.
+DEBUG: 2025-10-14 13:11:06 - [worker-2] Cache miss for product_id=12345. Fetching from database.
+ERROR: 2025-10-14 13:11:10 - [worker-2] Failed to connect to database: Connection timed out after 3001ms.
+INFO: 2025-10-14 13:11:11 - [worker-2] Retrying database connection... (Attempt 1/3)
+DEBUG: 2025-10-14 13:11:15 - [worker-2] Database connection re-established successfully.
+INFO: 2025-10-14 13:11:16 - [worker-2] Successfully fetched product details for product_id=12345.
+WARNING: 2025-10-14 13:12:30 - [http-nio-8080-exec-1] API response time for /api/v1/products/12345 is high: 3500ms.
+DEBUG: 2025-10-14 13:13:01 - [worker-1] Health check endpoint /health called from 192.168.1.100
+INFO: 2025-10-14 13:14:05 - [http-nio-8080-exec-2] User 'alice' logged out.
+DEBUG: 2025-10-14 13:15:00 - [worker-3] Processing data batch #882.
+DEBUG: 2025-10-14 13:15:05 - [worker-3] Batch #882 contains 500 records.
+ERROR: 2025-10-14 13:15:10 - [worker-3] NullPointerException at com.example.Processor.run(Processor.java:152) while processing record #882-231.
+INFO: 2025-10-14 13:15:11 - [worker-3] Skipping corrupted record #882-231.
+DEBUG: 2025-10-14 13:15:30 - [worker-3] Data processing for batch #882 complete.
+WARNING: 2025-10-14 13:16:00 - [main] Disk space is running low on /var/log. 95% used. Log rotation might be required.
+DEBUG: 2025-10-14 13:17:01 - [worker-1] Health check endpoint /health called from 192.168.1.100
+INFO: 2025-10-14 13:18:20 - [http-nio-8080-exec-4] GET /api/v1/settings from user 'bob'.
+DEBUG: 2025-10-14 13:18:21 - [worker-1] Fetched settings for user_id=102.
+INFO: 2025-10-14 13:19:00 - [main] Running daily data backup job.
+DEBUG: 2025-10-14 13:19:01 - [backup-thread] Starting backup of 'users' table.
+DEBUG: 2025-10-14 13:19:15 - [backup-thread] 'users' table backup complete.
+DEBUG: 2025-10-14 13:19:16 - [backup-thread] Starting backup of 'orders' table.
+DEBUG: 2025-10-14 13:19:45 - [backup-thread] 'orders' table backup complete.
+INFO: 2025-10-14 13:19:46 - [main] Daily data backup job finished successfully.
+DEBUG: 2025-10-14 13:20:00 - [http-nio-8080-exec-3] POST /api/v1/files/upload from user 'bob'.
+INFO: 2025-10-14 13:20:01 - [worker-4] File 'monthly_report.csv' (5.2MB) upload started.
+ERROR: 2025-10-14 13:20:05 - [worker-4] File upload failed for 'monthly_report.csv': Permission denied on target directory /mnt/uploads.
+INFO: 2025-10-14 13:20:06 - [worker-4] Notifying user 'bob' about failed upload.
+INFO: 2025-10-14 13:21:00 - [http-nio-8080-exec-5] User authentication request for user 'dave'.
+INFO: 2025-10-14 13:21:01 - [http-nio-8080-exec-5] User 'dave' logged in successfully. Session ID: 9b8d7a6f
+DEBUG: 2025-10-14 13:22:01 - [worker-1] Health check endpoint /health called from 192.168.1.100
+INFO: 2025-10-14 13:23:10 - [main] Refreshing feature flags from remote source.
+INFO: 2025-10-14 13:23:11 - [main] 2 feature flags updated.
+WARNING: 2025-10-14 13:24:00 - [worker-2] Deprecated API endpoint /api/v0/status was called by client 10.0.1.55.
+DEBUG: 2025-10-14 13:25:00 - [http-nio-8080-exec-6] GET /api/v1/users/102 from user 'bob'.
+DEBUG: 2025-10-14 13:26:30 - [http-nio-8080-exec-7] PUT /api/v1/settings request from user 'bob'.
+INFO: 2025-10-14 13:26:31 - [worker-3] User settings updated for user_id=102.
+INFO: 2025-10-14 13:28:00 - [http-nio-8080-exec-1] User 'bob' logged out.
+INFO: 2025-10-14 13:29:00 - [http-nio-8080-exec-2] User 'dave' logged out.
+DEBUG: 2025-10-14 13:30:00 - [main] No active user sessions. Entering idle mode.
+INFO: 2025-10-14 13:30:15 - [main] Received shutdown signal.
+INFO: 2025-10-14 13:30:16 - [main] Stopping web server.
+INFO: 2025-10-14 13:30:17 - [main] Closing database connection pool.
+INFO: 2025-10-14 13:30:18 - [main] Disconnecting from Redis cache.
+INFO: 2025-10-14 13:30:19 - [main] Application shut down gracefully.
+INFO: 2025-10-14 13:05:01 - [main] Application starting up...
+INFO: 2025-10-14 13:05:02 - [main] Configuration loaded from /etc/app/config.yml
+INFO: 2025-10-14 13:05:03 - [main] Database connection pool initialized for postgresql://db-main.internal:5432
+INFO: 2025-10-14 13:05:03 - [main] Redis cache client connected to redis.internal:6379
+INFO: 2025-10-14 13:05:04 - [main] Starting web server on 0.0.0.0:8080
+DEBUG: 2025-10-14 13:06:10 - [worker-1] Health check endpoint /health called from 192.168.1.100
+INFO: 2025-10-14 13:06:15 - [http-nio-8080-exec-1] User authentication request for user 'alice'.
+DEBUG: 2025-10-14 13:06:15 - [http-nio-8080-exec-1] Authenticating user 'alice' against LDAP server.
+INFO: 2025-10-14 13:06:16 - [http-nio-8080-exec-1] User 'alice' logged in successfully. Session ID: fa21b8c9
+DEBUG: 2025-10-14 13:06:20 - [http-nio-8080-exec-2] GET /api/v1/dashboard request from user 'alice'.
+DEBUG: 2025-10-14 13:06:21 - [worker-3] Fetching dashboard data for user_id=101.
+DEBUG: 2025-10-14 13:06:22 - [worker-3] SQL Query: SELECT _ FROM user_widgets WHERE user_id = 101;
+INFO: 2025-10-14 13:07:05 - [http-nio-8080-exec-3] User authentication request for user 'bob'.
+INFO: 2025-10-14 13:07:06 - [http-nio-8080-exec-3] User 'bob' logged in successfully. Session ID: 3e45c1aa
+DEBUG: 2025-10-14 13:07:10 - [http-nio-8080-exec-4] POST /api/v1/reports request from user 'bob'.
+INFO: 2025-10-14 13:07:11 - [worker-2] Generating new report for user 'bob'.
+DEBUG: 2025-10-14 13:07:15 - [worker-2] Report generation task #451 started.
+DEBUG: 2025-10-14 13:07:30 - [worker-2] Data aggregation complete for report #451.
+INFO: 2025-10-14 13:07:35 - [worker-2] Report #451 generated successfully.
+DEBUG: 2025-10-14 13:08:01 - [worker-1] Health check endpoint /health called from 192.168.1.100
+WARNING: 2025-10-14 13:08:45 - [worker-3] High memory usage detected: 88% used.
+DEBUG: 2025-10-14 13:09:00 - [http-nio-8080-exec-5] GET /api/v1/users/search?q=test request from user 'alice'.
+INFO: 2025-10-14 13:09:01 - [worker-1] User search performed with query: 'test'.
+DEBUG: 2025-10-14 13:10:00 - [worker-4] Starting scheduled job: CleanupTemporaryFiles.
+INFO: 2025-10-14 13:10:01 - [worker-4] Deleted 152 temporary files from /tmp.
+INFO: 2025-10-14 13:11:00 - [http-nio-8080-exec-6] User authentication request for user 'charlie'.
+ERROR: 2025-10-14 13:11:01 - [http-nio-8080-exec-6] Authentication failed for user 'charlie': Invalid credentials provided.
+DEBUG: 2025-10-14 13:11:05 - [http-nio-8080-exec-7] GET /api/v1/products/12345 request from user 'alice'.
+DEBUG: 2025-10-14 13:11:06 - [worker-2] Fetching product details from cache for product_id=12345.
+DEBUG: 2025-10-14 13:11:06 - [worker-2] Cache miss for product_id=12345. Fetching from database.
+ERROR: 2025-10-14 13:11:10 - [worker-2] Failed to connect to database: Connection timed out after 3001ms.
+INFO: 2025-10-14 13:11:11 - [worker-2] Retrying database connection... (Attempt 1/3)
+DEBUG: 2025-10-14 13:11:15 - [worker-2] Database connection re-established successfully.
+INFO: 2025-10-14 13:11:16 - [worker-2] Successfully fetched product details for product_id=12345.
+WARNING: 2025-10-14 13:12:30 - [http-nio-8080-exec-1] API response time for /api/v1/products/12345 is high: 3500ms.
+DEBUG: 2025-10-14 13:13:01 - [worker-1] Health check endpoint /health called from 192.168.1.100
+INFO: 2025-10-14 13:14:05 - [http-nio-8080-exec-2] User 'alice' logged out.
+DEBUG: 2025-10-14 13:15:00 - [worker-3] Processing data batch #882.
+DEBUG: 2025-10-14 13:15:05 - [worker-3] Batch #882 contains 500 records.
+ERROR: 2025-10-14 13:15:10 - [worker-3] NullPointerException at com.example.Processor.run(Processor.java:152) while processing record #882-231.
+INFO: 2025-10-14 13:15:11 - [worker-3] Skipping corrupted record #882-231.
+DEBUG: 2025-10-14 13:15:30 - [worker-3] Data processing for batch #882 complete.
+WARNING: 2025-10-14 13:16:00 - [main] Disk space is running low on /var/log. 95% used. Log rotation might be required.
+DEBUG: 2025-10-14 13:17:01 - [worker-1] Health check endpoint /health called from 192.168.1.100
+INFO: 2025-10-14 13:18:20 - [http-nio-8080-exec-4] GET /api/v1/settings from user 'bob'.
+DEBUG: 2025-10-14 13:18:21 - [worker-1] Fetched settings for user_id=102.
+INFO: 2025-10-14 13:19:00 - [main] Running daily data backup job.
+DEBUG: 2025-10-14 13:19:01 - [backup-thread] Starting backup of 'users' table.
+DEBUG: 2025-10-14 13:19:15 - [backup-thread] 'users' table backup complete.
+DEBUG: 2025-10-14 13:19:16 - [backup-thread] Starting backup of 'orders' table.
+DEBUG: 2025-10-14 13:19:45 - [backup-thread] 'orders' table backup complete.
+INFO: 2025-10-14 13:19:46 - [main] Daily data backup job finished successfully.
+DEBUG: 2025-10-14 13:20:00 - [http-nio-8080-exec-3] POST /api/v1/files/upload from user 'bob'.
+INFO: 2025-10-14 13:20:01 - [worker-4] File 'monthly_report.csv' (5.2MB) upload started.
+ERROR: 2025-10-14 13:20:05 - [worker-4] File upload failed for 'monthly_report.csv': Permission denied on target directory /mnt/uploads.
+INFO: 2025-10-14 13:20:06 - [worker-4] Notifying user 'bob' about failed upload.
+INFO: 2025-10-14 13:21:00 - [http-nio-8080-exec-5] User authentication request for user 'dave'.
+INFO: 2025-10-14 13:21:01 - [http-nio-8080-exec-5] User 'dave' logged in successfully. Session ID: 9b8d7a6f
+DEBUG: 2025-10-14 13:22:01 - [worker-1] Health check endpoint /health called from 192.168.1.100
+INFO: 2025-10-14 13:23:10 - [main] Refreshing feature flags from remote source.
+INFO: 2025-10-14 13:23:11 - [main] 2 feature flags updated.
+WARNING: 2025-10-14 13:24:00 - [worker-2] Deprecated API endpoint /api/v0/status was called by client 10.0.1.55.
+DEBUG: 2025-10-14 13:25:00 - [http-nio-8080-exec-6] GET /api/v1/users/102 from user 'bob'.
+DEBUG: 2025-10-14 13:26:30 - [http-nio-8080-exec-7] PUT /api/v1/settings request from user 'bob'.
+INFO: 2025-10-14 13:26:31 - [worker-3] User settings updated for user_id=102.
+INFO: 2025-10-14 13:28:00 - [http-nio-8080-exec-1] User 'bob' logged out.
+INFO: 2025-10-14 13:29:00 - [http-nio-8080-exec-2] User 'dave' logged out.
+DEBUG: 2025-10-14 13:30:00 - [main] No active user sessions. Entering idle mode.
+INFO: 2025-10-14 13:30:15 - [main] Received shutdown signal.
+INFO: 2025-10-14 13:30:16 - [main] Stopping web server.
+INFO: 2025-10-14 13:30:17 - [main] Closing database connection pool.
+INFO: 2025-10-14 13:30:18 - [main] Disconnecting from Redis cache.
+INFO: 2025-10-14 13:30:19 - [main] Application shut down gracefully.
