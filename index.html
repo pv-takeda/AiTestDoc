@@ -740,8 +740,8 @@
         <h2 data-anim class="font-bold slide-header font-h1">
           5. 高速化テクニック②: 反復作業を撲滅
         </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="space-y-6">
+        <div class="grid grid-cols-3 gap-8 flex-grow items-center">
+          <div data-anim style="--delay: 100ms" class="col-span-1 space-y-6">
             <div class="list-item-box border-l-4 border-yellow">
               <h3 class="font-bold text-yellow font-h2">
                 VSCodeタスクで自動化
@@ -751,7 +751,11 @@
               </p>
             </div>
           </div>
-          <div data-anim style="--delay: 200ms" class="terminal-window">
+          <div
+            data-anim
+            style="--delay: 200ms"
+            class="col-span-2 terminal-window"
+          >
             <div class="terminal-header"></div>
             <div class="terminal-body">
               <img
@@ -979,7 +983,9 @@
             <p class="font-body-lg">
               ログ出力をパイプ(|)で直接Geminiに渡し、エラーの抽出と原因・対処法の説明を依頼します。
             </p>
-            <p class="code-block font-code mt-4 text-sm mx-auto w-11/12">
+            <p
+              class="code-block font-body-md mt-8 mx-auto w-full max-w-4xl text-center p-6"
+            >
               journalctl -n 50 | gemini gen
               "このシステムログの中からエラー(error)や警告(warning)に関する行だけを抜き出して。何が起きているか、考えられる原因と対処法を箇条書きで簡潔に日本語で説明して"
             </p>
@@ -991,8 +997,8 @@
         <h2 data-anim class="font-bold slide-header font-h1">
           6. 活用事例: ログ監視と要約 (3/3)
         </h2>
-        <div class="grid grid-cols-5 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="col-span-2 space-y-6">
+        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
+          <div data-anim style="--delay: 100ms" class="space-y-6">
             <h3 class="font-bold text-green font-h2">
               Step 2: 要約レポートを確認
             </h3>
@@ -1003,14 +1009,10 @@
               「認証エラーが多発」「ディスク容量の警告」など、重要なインシデントを即座に把握できます。
             </p>
           </div>
-          <div
-            data-anim
-            style="--delay: 200ms"
-            class="col-span-3 terminal-window"
-          >
+          <div data-anim style="--delay: 200ms" class="terminal-window">
             <div class="terminal-header"></div>
             <div
-              class="terminal-body p-4 text-left font-code text-xs overflow-y-auto"
+              class="terminal-body p-4 text-left font-code text-base overflow-y-auto"
             >
               <div>
                 <p>
@@ -1021,17 +1023,17 @@
                 <ul class="list-disc list-inside ml-4 text-slate-300">
                   <li>
                     認証エラー:
-                    <code class="text-red text-xs"
+                    <code class="text-red"
                       >Authentication failed for user 'charlie'</code
                     >
                   </li>
                   <li>
                     データベース接続エラー:
-                    <code class="text-red text-xs">Connection timed out</code>
+                    <code class="text-red">Connection timed out</code>
                   </li>
                   <li>
                     アプリケーションエラー:
-                    <code class="text-red text-xs">NullPointerException</code>
+                    <code class="text-red">NullPointerException</code>
                   </li>
                 </ul>
                 <h4 class="font-bold text-yellow mt-4">
