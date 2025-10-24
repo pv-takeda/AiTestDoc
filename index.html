@@ -3,1407 +3,560 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gemini CLI 活用術 // Colorful Style</title>
+    <title>上流工程デビューを成功させる！AI活用術セミナー</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap"
-      rel="stylesheet"
-    />
     <style>
-      /* --- Enhanced Theme Base --- */
+      /* Interフォントの読み込み */
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap");
+
       body {
-        font-family: "Noto Sans JP", sans-serif;
-        background-color: #0a0a0f;
-        color: #e3e3e3;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        background-image: radial-gradient(
-          circle at 1px 1px,
-          rgba(255, 255, 255, 0.05) 1px,
-          transparent 0
-        );
-        background-size: 25px 25px;
+        font-family: "Inter", "Noto Sans JP", sans-serif;
+        overflow: hidden; /* スクロールバーを非表示 */
       }
 
-      @keyframes background-pan {
-        0% {
-          background-position: 0% 0%;
-        }
-        100% {
-          background-position: 25px 25px;
-        }
-      }
-
-      body::before {
-        content: "";
+      /* スライドの基本スタイル */
+      .slide {
+        width: 100vw;
+        height: 100vh;
         position: absolute;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(
-            135deg,
-            rgba(10, 10, 15, 0.1) 25%,
-            transparent 25%
-          ),
-          linear-gradient(225deg, rgba(10, 10, 15, 0.1) 25%, transparent 25%);
-        background-size: 50px 50px;
-        animation: background-pan 3s linear infinite;
+        opacity: 0; /* デフォルトは非表示 */
+        pointer-events: none; /* クリックイベントを無効化 */
+        transition: opacity 0.5s ease-in-out;
+        padding: 4rem; /* 全体にパディング */
       }
 
-      h1,
-      h2,
-      h3,
-      h4,
-      .font-space {
-        font-family: "Space Grotesk", "Noto Sans JP", sans-serif;
+      /* :targetセレクタで表示するスライドを制御 */
+      .slide:target,
+      #slide1:target {
+        /* 最初のスライドの特別扱い */
+        opacity: 1;
+        pointer-events: auto; /* 表示されたスライドのみクリック可能に */
+        z-index: 10;
       }
 
-      /* --- Slide Container --- */
-      .slide-container {
-        position: relative;
-        width: 95vw;
-        height: calc(95vw * 9 / 16);
-        max-height: 95vh;
-        max-width: calc(95vh * 16 / 9);
-        perspective: 2000px;
+      /* 最初のスライドだけデフォルトで表示 (ハッシュがない場合) */
+      #slide1 {
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 5; /* :targetより優先度を低く */
       }
 
-      /* --- Slide Styling & Animation --- */
-      .slide {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: rgba(30, 30, 33, 0.7);
-        border: 1px solid rgba(74, 74, 82, 0.5);
-        border-radius: 1.5rem;
-        padding: 4% 5%;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-        transform: rotateY(-30deg) scale(0.9);
-        transform-origin: right center;
+      /* スライド内コンテンツの共通レイアウト */
+      .slide-content {
         display: flex;
         flex-direction: column;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        height: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
       }
 
-      .slide.active {
-        opacity: 1;
-        visibility: visible;
-        transform: rotateY(0) scale(1);
+      /* ナビゲーションボタン */
+      .nav-button {
+        position: absolute;
+        bottom: 2rem;
+        z-index: 20;
+        padding: 0.75rem 1.5rem;
+        background-color: rgba(0, 0, 0, 0.4);
+        color: white;
+        border-radius: 9999px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.2s;
+      }
+      .nav-button:hover {
+        background-color: rgba(0, 0, 0, 0.6);
+      }
+      .nav-prev {
+        left: 2rem;
+      }
+      .nav-next {
+        right: 2rem;
       }
 
-      .slide:not(.active) {
-        pointer-events: none;
-      }
-
-      /* --- Staggered Element Animation --- */
-      [data-anim] {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-      }
-      .active [data-anim] {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      /* --- Navigation --- */
-      .slide-nav {
-        position: fixed;
-        bottom: 3%;
+      /* ページ番号 */
+      .page-number {
+        position: absolute;
+        bottom: 2rem;
         left: 50%;
         transform: translateX(-50%);
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        background-color: rgba(30, 30, 33, 0.8);
-        padding: 0.5rem 1rem;
-        border: 1px solid #4a4a52;
-        border-radius: 99px;
-        backdrop-filter: blur(8px);
-        z-index: 50;
+        z-index: 15;
+        color: #999;
+        font-size: 1rem;
       }
 
-      .nav-btn {
-        background-color: #3b3b40;
-        color: #f0f0f0;
-        border-radius: 50%;
-        width: 3rem;
-        height: 3rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        border: 1px solid transparent;
+      /* リストのスタイル */
+      ul {
+        list-style-type: disc;
+        padding-left: 2.5rem; /* Tailwindのpl-10相当 */
+        margin-top: 1rem;
       }
-      .nav-btn:hover {
-        background-color: #8ab4f8;
-        color: #131316;
-        transform: scale(1.1);
-        box-shadow: 0 0 15px rgba(138, 180, 248, 0.5);
-      }
-      #slideCounter {
-        color: #c7c7c7;
-        font-size: 1.25rem;
-        font-family: "Space Grotesk", monospace;
-        min-width: 80px;
-        text-align: center;
+      li {
+        margin-bottom: 0.75rem; /* Tailwindのmb-3相当 */
       }
 
-      /* --- Content Styling --- */
-      .code-block {
-        background-color: rgba(40, 42, 54, 0.8);
-        border: 1px solid #4a4a52;
-        color: #f8f8f2;
-        border-radius: 0.5rem;
-        padding: 1rem 1.25rem;
-        overflow-x: auto;
-        font-family: "Space Grotesk", "Courier New", monospace;
-      }
-
-      /* Syntax Highlighting */
-      .code-block .c-gray {
-        color: #6272a4;
-      } /* Comment */
-      .code-block .c-purple {
-        color: #bd93f9;
-      } /* Keyword */
-      .code-block .c-green {
-        color: #50fa7b;
-      } /* Function */
-      .code-block .c-yellow {
-        color: #f1fa8c;
-      } /* String */
-      .code-block .c-orange {
-        color: #ffb86c;
-      } /* Number */
-      .code-block .c-cyan {
-        color: #8be9fd;
-      } /* Variable, Property */
-
-      .text-blue {
-        color: #8ab4f8;
-      }
-      .text-purple {
-        color: #c58af9;
-      }
-      .text-red {
-        color: #f28b82;
-      }
-      .text-green {
-        color: #81c995;
-      }
-      .text-yellow {
-        color: #fdd663;
-      }
-
-      .slide-header {
-        padding-bottom: 1rem;
-        margin-bottom: 2rem;
-        color: #e3e3e3;
-        border-bottom: 2px solid #3c4043;
-        position: relative;
-      }
-      .slide-header::after {
-        content: "";
-        position: absolute;
-        bottom: -2px;
-        left: 0;
-        width: 10%;
-        height: 2px;
-        background: linear-gradient(90deg, #8ab4f8, #c58af9);
-        transition: width 0.4s ease-out;
-      }
-      .active .slide-header::after {
-        width: 40%;
-      }
-
-      .list-item-box {
-        background: rgba(42, 42, 46, 0.5);
-        padding: 1rem 1.5rem;
-        transition: all 0.3s ease;
-        border-radius: 0.5rem;
-        border: 1px solid #4a4a52;
-      }
-      .list-item-box:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        border-color: #8ab4f8;
-      }
-
-      .risk-box {
-        border: 1px solid #f28b82;
-        background: rgba(242, 139, 130, 0.1);
-        padding: 1.5rem;
-        border-radius: 1rem;
-      }
-      .solution-box {
-        border: 1px solid #81c995;
-        background: rgba(129, 201, 149, 0.1);
-        padding: 1.5rem;
-        border-radius: 1rem;
-      }
-
-      .text-gradient {
-        background: linear-gradient(90deg, #8ab4f8, #c58af9, #fdd663);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: gradient-text-flow 5s ease infinite;
-        background-size: 200% 200%;
-      }
-
-      @keyframes gradient-text-flow {
-        0% {
-          background-position: 0% 50%;
-        }
-        50% {
-          background-position: 100% 50%;
-        }
-        100% {
-          background-position: 0% 50%;
-        }
-      }
-
-      .terminal-window {
-        background-color: rgba(40, 42, 54, 0.8);
-        border-radius: 0.5rem;
-        border: 1px solid #4a4a52;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-      }
-      .terminal-header {
-        background-color: #3c4043;
-        padding: 0.5rem 1rem;
-        border-bottom: 1px solid #4a4a52;
-        border-top-left-radius: 0.5rem;
-        border-top-right-radius: 0.5rem;
-      }
-      .terminal-body {
-        padding: 1rem;
-        flex-grow: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .font-hero {
-        font-size: clamp(48px, 7vw, 128px);
-        line-height: 1.1;
-      }
-      .font-display {
-        font-size: clamp(36px, 5vw, 96px);
-        line-height: 1.1;
-      }
-      .font-h1 {
-        font-size: clamp(30px, 4vw, 72px);
-        line-height: 1.2;
-      }
-      .font-h2 {
-        font-size: clamp(24px, 3vw, 60px);
-        line-height: 1.2;
-      }
-      .font-h3 {
-        font-size: clamp(20px, 2.2vw, 48px);
-        line-height: 1.3;
-      }
-      .font-body-lg {
-        font-size: clamp(18px, 1.8vw, 36px);
-        line-height: 1.6;
-      }
-      .font-body-md {
-        font-size: clamp(16px, 1.5vw, 30px);
-        line-height: 1.6;
-      }
-      .font-body-sm {
-        font-size: clamp(14px, 1.2vw, 24px);
-        line-height: 1.6;
-      }
-      .font-code {
-        font-size: clamp(14px, 1.3vw, 26px);
-        line-height: 1.5;
+      /* プロンプト例のスタイル */
+      .prompt-box {
+        background-color: #f3f4f6; /* bg-gray-100 */
+        border-left: 4px solid #3b82f6; /* border-l-4 border-blue-500 */
+        padding: 1.5rem; /* p-6 */
+        border-radius: 0.5rem; /* rounded-lg */
+        margin-top: 1.5rem; /* mt-6 */
+        font-family: "Courier New", Courier, monospace;
+        white-space: pre-wrap; /* 改行を保持 */
       }
     </style>
   </head>
-  <body>
-    <div class="slide-container">
-      <!-- Slide 1: Title -->
-      <div class="slide active flex justify-center items-center text-center">
-        <div>
-          <h1
-            data-anim
-            class="font-bold tracking-widest font-hero text-gradient"
-          >
-            Gemini CLI
-          </h1>
-          <p
-            data-anim
-            style="--delay: 100ms"
-            class="mt-4 font-space font-display text-slate-300"
-          >
-            Visual Studio Codeと連携し加速するコード開発
-          </p>
-          <p
-            data-anim
-            style="--delay: 200ms"
-            class="text-slate-400 mt-12 tracking-wider font-h3"
-          >
-            // 活用術と組織で導入する際の観点
-          </p>
-        </div>
+  <body class="bg-gray-900 text-white">
+    <!-- スライド 1: タイトル -->
+    <section
+      id="slide1"
+      class="slide bg-gradient-to-br from-blue-900 to-indigo-900"
+    >
+      <div class="slide-content text-center">
+        <h1 class="text-6xl font-bold mb-6 leading-tight">
+          上流工程デビューを成功させる！
+        </h1>
+        <p class="text-4xl font-semibold text-cyan-300">
+          若手のための「要件抽出〜文書化」AI活用術
+        </p>
+        <p class="mt-12 text-2xl text-gray-300">
+          202X年XX月XX日 / 〇〇株式会社
+        </p>
       </div>
+      <!-- ナビゲーション -->
+      <a href="#slide2" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">1 / 14</span>
+    </section>
 
-      <!-- Slide 2: Self Introduction -->
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          SPEAKER PROFILE
-        </h2>
-        <div class="grid grid-cols-5 gap-6 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="col-span-2 text-center">
-            <img
-              src="000128武田大蔵_smartHR用.png"
-              alt="武田大蔵 プロフィール写真"
-              class="w-56 h-56 mx-auto mb-6 border-4 border-gray-500 rounded-full object-cover"
-            />
-            <h3 class="text-blue font-bold font-h2">武田大蔵</h3>
-            <p class="text-purple mt-2 font-h3">株式会社ProVision</p>
-            <p class="text-slate-300 mt-1 font-body-lg">係長 兼 TechLead</p>
-          </div>
-          <div data-anim style="--delay: 200ms" class="col-span-3 space-y-3">
-            <div>
-              <h4 class="font-bold text-purple mb-2 font-h3">// CAREER</h4>
-              <ul class="space-y-1 list-inside font-body-md">
-                <li>
-                  <span class="text-blue font-bold">2015 :</span>
-                  SES企業でPGとしてキャリアを開始
-                </li>
-                <li>
-                  <span class="text-blue font-bold">2017 :</span>
-                  印刷会社で社内SE & 印刷オペレーター
-                  <ul
-                    class="list-disc list-inside ml-6 text-slate-300 font-body-sm"
-                  >
-                    <li>勤怠管理システムを開発しEXPO出展</li>
-                  </ul>
-                </li>
-                <li>
-                  <span class="text-blue font-bold">2021 :</span>
-                  株式会社ProVision 入社
-                  <ul
-                    class="list-disc list-inside ml-6 text-slate-300 font-body-sm"
-                  >
-                    <li>ウェアラブルIoTソリューション開発（提案～案件管理）</li>
-                    <li>EV車のバッテリー診断アプリ開発（提案～案件管理）</li>
-                    <li>農作業機器と連動するアプリ開発（提案～案件管理）</li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 class="font-bold text-green mb-2 font-h3">
-                // HOBBY & SKILLS
-              </h4>
-              <ul class="space-y-1 list-inside font-body-md">
-                <li><strong class="text-blue">趣味 :</strong> キャンプ</li>
-                <li>
-                  <strong class="text-blue">特技 :</strong> 漆喰塗り、外構工事
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 class="font-bold text-yellow mb-2 font-h3">// OTHERS</h4>
-              <p class="font-body-md">１歳児の育児頑張ってます！</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 3: Table of Contents -->
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          目次 // CONTENTS
-        </h2>
-        <div
-          class="flex-grow grid grid-cols-2 gap-x-12 gap-y-4 items-center font-body-lg"
-        >
-          <ol
-            data-anim
-            style="--delay: 100ms"
-            class="space-y-4 list-decimal list-inside"
-          >
-            <li><span class="text-blue">Gemini CLIとは？</span></li>
-            <li><span class="text-blue">Gemini CLIのメリット</span></li>
-            <li><span class="text-blue">他のAIツールとの比較</span></li>
-            <li><span class="text-blue">実際の使い方（デモ）</span></li>
-            <li><span class="text-blue">VSCode連携 高速化テクニック</span></li>
-            <li>
-              <span class="text-blue">活用事例</span>
-              <ul
-                class="list-disc list-inside ml-8 mt-2 font-body-md text-slate-300"
-              >
-                <li>テストコード生成</li>
-                <li>ログ監視と要約</li>
-              </ul>
-            </li>
-          </ol>
-          <ol
-            data-anim
-            style="--delay: 200ms"
-            class="space-y-4 list-decimal list-inside"
-            start="7"
-          >
-            <li><span class="text-yellow">活用の課題と対策</span></li>
-            <li><span class="text-yellow">組織導入ガイド</span></li>
-            <li><span class="text-yellow">まとめ</span></li>
-          </ol>
-        </div>
-      </div>
-
-      <!-- Slide 4: What is Gemini CLI? -->
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          1. Gemini CLIとは？
-        </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="space-y-4">
-            <p class="font-body-lg text-slate-300">
-              ターミナルからGoogleのAIモデル「Gemini」を直接利用できるツールです。
+    <!-- スライド 2: 自己紹介 -->
+    <section id="slide2" class="slide bg-gray-800">
+      <div class="slide-content">
+        <h2 class="text-5xl font-bold text-cyan-300 mb-8">自己紹介</h2>
+        <div class="flex items-center">
+          <img
+            src="https://placehold.co/200x200/60a5fa/FFFFFF?text=Photo"
+            alt="発表者プロフィール写真"
+            class="rounded-full w-48 h-48 mr-10 border-4 border-cyan-300"
+          />
+          <div>
+            <p class="text-4xl font-bold mb-4">発表者名（あなたのお名前）</p>
+            <p class="text-2xl text-gray-300 mb-3">所属：〇〇株式会社 〇〇部</p>
+            <p class="text-xl text-gray-400">
+              経歴：SIerとしてX年間、主に（業界名）のシステム開発に従事。
+              最近はプロジェクトリーダーとして上流工程を担当しつつ、AIを活用した業務効率化を推進中。
             </p>
-            <ul class="space-y-3 font-body-md list-disc list-inside">
-              <li class="text-blue">
-                質問応答、文章作成、翻訳、要約などのテキスト生成
+          </div>
+        </div>
+      </div>
+      <!-- ナビゲーション -->
+      <a href="#slide1" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide3" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">2 / 14</span>
+    </section>
+
+    <!-- スライド 3: アジェンダ -->
+    <section id="slide3" class="slide bg-gray-900">
+      <div class="slide-content">
+        <h2 class="text-5xl font-bold text-cyan-300 mb-10">
+          今日お話しすること（30分）
+        </h2>
+        <ol
+          class="text-3xl space-y-6 text-gray-200"
+          style="list-style-type: decimal; padding-left: 3rem"
+        >
+          <li>
+            <span class="font-bold">はじめに：</span> なぜ今、上流工程でAIか？
+            (5分)
+          </li>
+          <li>
+            <span class="font-bold">若手の悩み：</span> 上流工程の「見えない壁」
+            (5分)
+          </li>
+          <li>
+            <span class="font-bold">AI活用術①：</span> AIと「要件抽出」 (10分)
+          </li>
+          <li>
+            <span class="font-bold">AI活用術②：</span> AIと「文書化」 (5分)
+          </li>
+          <li>
+            <span class="font-bold">実践のコツ：</span> AIを「副操縦士」にする
+            (3分)
+          </li>
+          <li><span class="font-bold">まとめ</span> (2分)</li>
+        </ol>
+      </div>
+      <!-- ナビゲーション -->
+      <a href="#slide2" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide4" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">3 / 14</span>
+    </section>
+
+    <!-- スライド 4: なぜ今、AIか？ -->
+    <section id="slide4" class="slide bg-gray-800">
+      <div class="slide-content">
+        <h2 class="text-5xl font-bold text-cyan-300 mb-10">
+          1. なぜ今、上流工程でAIか？
+        </h2>
+        <ul class="text-3xl space-y-6">
+          <li>
+            <span class="text-yellow-300 font-bold">「何を」</span
+            >作るかが最も重要（手戻り防止）
+          </li>
+          <li>顧客の「本当の要望」を引き出すのは熟練の技</li>
+          <li>属人化しがちなノウハウをAIがサポート</li>
+          <li>
+            <span class="text-white bg-red-600 px-3 py-1 rounded-lg font-bold"
+              >「AIに質問を考えさせる」</span
+            >ことで、経験の浅さをカバーできる
+          </li>
+        </ul>
+      </div>
+      <!-- ナビゲーション -->
+      <a href="#slide3" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide5" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">4 / 14</span>
+    </section>
+
+    <!-- スライド 5: 若手の悩み -->
+    <section id="slide5" class="slide bg-gray-900">
+      <div class="slide-content">
+        <h2 class="text-5xl font-bold text-cyan-300 mb-10">
+          2. 若手の悩み：上流工程の「見えない壁」
+        </h2>
+        <div class="grid grid-cols-2 gap-8 text-center">
+          <div class="bg-gray-800 p-8 rounded-lg shadow-lg">
+            <p class="text-8xl mb-4">🤔</p>
+            <h3 class="text-3xl font-bold mb-3 text-yellow-300">
+              要件抽出の壁
+            </h3>
+            <p class="text-xl text-gray-300">
+              「お客様に何を聞けばいいか分からない…」
+            </p>
+            <p class="text-xl text-gray-300">
+              「的外れな質問をしてしまいそう…」
+            </p>
+          </div>
+          <div class="bg-gray-800 p-8 rounded-lg shadow-lg">
+            <p class="text-8xl mb-4">🤯</p>
+            <h3 class="text-3xl font-bold mb-3 text-yellow-300">文書化の壁</h3>
+            <p class="text-xl text-gray-300">
+              「議事録やメモがうまく整理できない…」
+            </p>
+            <p class="text-xl text-gray-300">
+              「要件定義書にどう落とし込むの…？」
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- ナビゲーション -->
+      <a href="#slide4" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide6" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">5 / 14</span>
+    </section>
+
+    <!-- スライド 6: AI活用術① 概要 -->
+    <section id="slide6" class="slide bg-gray-800">
+      <div class="slide-content">
+        <h2 class="text-5xl font-bold text-cyan-300 mb-10">
+          3. AI活用術①：AIと「要件抽出」
+        </h2>
+        <p class="text-4xl font-bold mb-6">
+          AIを「ヒアリングの壁打ち相手」にする
+        </p>
+        <ul class="text-3xl space-y-5">
+          <li>
+            <span class="text-yellow-300">役割：</span> 経験豊富なコンサルタント
+            / インタビュアー
+          </li>
+          <li>
+            <span class="text-yellow-300">依頼：</span
+            >「顧客に聞くべき質問リスト」を作成させる
+          </li>
+          <li>
+            <span class="text-yellow-300">深掘：</span>
+            作成された質問をベースに、さらに深掘りさせる
+          </li>
+        </ul>
+      </div>
+      <!-- ナビゲーション -->
+      <a href="#slide5" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide7" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">6 / 14</span>
+    </section>
+
+    <!-- スライド 7: プロンプト例（要件抽出） -->
+    <section id="slide7" class="slide bg-gray-900">
+      <div class="slide-content">
+        <h2 class="text-4xl font-bold text-cyan-300 mb-6">
+          活用例：質問リストの作成
+        </h2>
+        <p class="text-xl mb-4">
+          AIに「優秀なコンサルタント」として振る舞ってもらい、ヒアリング項目を網羅的に洗い出します。
+        </p>
+        <div class="prompt-box text-lg">
+          <p class="font-bold text-gray-400"># あなたの役割</p>
+          <p>
+            あなたは、飲食業界の業務改善に詳しいベテランのITコンサルタントです。
+          </p>
+          <br />
+          <p class="font-bold text-gray-400"># 依頼内容</p>
+          <p>
+            飲食店の「勤怠管理システム」を新規導入するにあたり、店長にヒアリングすべき質問項目を、以下の観点で網羅的に50個挙げてください。
+          </p>
+          <br />
+          <p class="font-bold text-gray-400"># 観点</p>
+          <p>
+            ・現状の課題<br />・必要な機能<br />・運用方法<br />・他のシステムとの連携
+          </p>
+        </div>
+      </div>
+      <!-- ナビゲーション -->
+      <a href="#slide6" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide8" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">7 / 14</span>
+    </section>
+
+    <!-- スライド 8: デモイメージ（要件抽出） -->
+    <section id="slide8" class="slide bg-gray-800">
+      <div class="slide-content">
+        <h2 class="text-4xl font-bold text-cyan-300 mb-6">
+          AIの回答イメージ（質問リスト）
+        </h2>
+        <div class="grid grid-cols-2 gap-6">
+          <div class="bg-gray-700 p-6 rounded-lg">
+            <h4 class="text-xl font-bold text-yellow-300 mb-3">
+              【現状の課題】
+            </h4>
+            <ul class="text-sm list-disc pl-5 space-y-1">
+              <li>現在の勤怠管理（紙、Excelなど）で困っている点は？</li>
+              <li>シフト作成にどれくらい時間がかかっていますか？</li>
+              <li>給与計算の間違いは発生していますか？</li>
+            </ul>
+          </div>
+          <div class="bg-gray-700 p-6 rounded-lg">
+            <h4 class="text-xl font-bold text-yellow-300 mb-3">
+              【必要な機能】
+            </h4>
+            <ul class="text-sm list-disc pl-5 space-y-1">
+              <li>打刻方法の希望（ICカード、生体認証、スマホ）は？</li>
+              <li>複雑なシフトパターン（早番、遅番、通し）に対応可能か？</li>
+              <li>残業や休憩時間の自動計算は必要か？</li>
+            </ul>
+          </div>
+          <div class="bg-gray-700 p-6 rounded-lg">
+            <h4 class="text-xl font-bold text-yellow-300 mb-3">【運用方法】</h4>
+            <ul class="text-sm list-disc pl-5 space-y-1">
+              <li>シフトの申請や承認は誰が行いますか？</li>
+              <li>打刻忘れがあった場合の修正フローは？</li>
+              <li>店長とアルバイト、それぞれどこまでの操作権限が必要？</li>
+            </ul>
+          </div>
+          <div class="bg-gray-700 p-6 rounded-lg">
+            <h4 class="text-xl font-bold text-yellow-300 mb-3">
+              【システム連携】
+            </h4>
+            <ul class="text-sm list-disc pl-5 space-y-1">
+              <li>現在使用している給与計算ソフトは何ですか？</li>
+              <li>そのソフトにCSVなどでデータ連携が必要ですか？</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- ナビゲーション -->
+      <a href="#slide7" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide9" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">8 / 14</span>
+    </section>
+
+    <!-- スライド 9: 要件抽出のメリット -->
+    <section id="slide9" class="slide bg-gray-900">
+      <div class="slide-content">
+        <h2 class="text-5xl font-bold text-cyan-300 mb-10">
+          AIによる「要件抽出」のメリット
+        </h2>
+        <ul class="text-3xl space-y-6">
+          <li>
+            <span class="text-yellow-300 font-bold">網羅性の担保：</span>
+            自分の知識だけでは漏れてしまう観点をAIが補ってくれる。
+          </li>
+          <li>
+            <span class="text-yellow-300 font-bold">深掘りのきっかけ：</span>
+            AIの質問をベースに「なぜそれが必要か？」を考える訓練になる。
+          </li>
+          <li>
+            <span class="text-yellow-300 font-bold">自信がつく：</span
+            >「これだけ準備した」という自信が、顧客との対話の余裕につながる。
+          </li>
+        </ul>
+      </div>
+      <!-- ナビゲーション -->
+      <a href="#slide8" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide10" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">9 / 14</span>
+    </section>
+
+    <!-- スライド 10: AI活用術② 概要 -->
+    <section id="slide10" class="slide bg-gray-800">
+      <div class="slide-content">
+        <h2 class="text-5xl font-bold text-cyan-300 mb-10">
+          4. AI活用術②：AIと「文書化」
+        </h2>
+        <p class="text-4xl font-bold mb-6">AIを「優秀なアシスタント」にする</p>
+        <ul class="text-3xl space-y-5">
+          <li>
+            <span class="text-yellow-300">役割：</span> 議事録作成のプロ /
+            ドキュメント整理担当
+          </li>
+          <li>
+            <span class="text-yellow-300">依頼：</span>
+            ヒアリングの音声（文字起こし）やメモを要約させる
+          </li>
+          <li>
+            <span class="text-yellow-300">整理：</span>
+            要約から「決定事項」「TODO」「要件リスト」を抽出させる
+          </li>
+        </ul>
+      </div>
+      <!-- ナビゲーション -->
+      <a href="#slide9" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide11" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">10 / 14</span>
+    </section>
+
+    <!-- スライド 11: プロンプト例（文書化） -->
+    <section id="slide11" class="slide bg-gray-900">
+      <div class="slide-content">
+        <h2 class="text-4xl font-bold text-cyan-300 mb-6">
+          活用例：議事録から要件リスト作成
+        </h2>
+        <p class="text-xl mb-4">
+          散らばった議論を構造化し、要件定義書の「素案」を素早く作成します。
+        </p>
+        <div class="prompt-box text-lg">
+          <p class="font-bold text-gray-400"># 依頼内容</p>
+          <p>
+            以下のヒアリング議事録（またはメモ）を読み込み、勤怠管理システムに必要な「機能要件」と「非機能要件」をリスト形式で整理してください。
+          </p>
+          <br />
+          <p class="font-bold text-gray-400"># 議事録（ここにコピペ）</p>
+          <p>
+            （店長）「やっぱりスマホで打刻したいよね。ICカードは失くすし。」<br />
+            （私）「スマホですか。GPSと連動させますか？」<br />
+            （店長）「あ、それはいいね。店でしか打刻できないように。あと、給与ソフトは『SMILE給与』を使ってるから、CSVで連携できないと困るな。」<br />
+            （店長）「それと大事なのが、深夜手当の計算。うちは22時以降と、あと土日祝も時給変えてるから、そこ自動でやってほしい。」
+            <br />...（以下略）...
+          </p>
+        </div>
+      </div>
+      <!-- ナビゲーション -->
+      <a href="#slide10" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide12" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">11 / 14</span>
+    </section>
+
+    <!-- スライド 12: AIの回答イメージ（文書化） -->
+    <section id="slide12" class="slide bg-gray-800">
+      <div class="slide-content">
+        <h2 class="text-4xl font-bold text-cyan-300 mb-6">
+          AIの回答イメージ（要件リスト）
+        </h2>
+        <div class="grid grid-cols-2 gap-6">
+          <div class="bg-gray-700 p-6 rounded-lg">
+            <h4 class="text-xl font-bold text-yellow-300 mb-3">【機能要件】</h4>
+            <ul class="text-base list-disc pl-5 space-y-2">
+              <li>スマートフォン（個人所有）による打刻機能</li>
+              <li>
+                GPSと連動し、指定された場所（店舗）でのみ打刻可能とする機能
               </li>
-              <li class="text-purple">
-                画像の内容を理解して応答するマルチモーダル機能
-              </li>
-              <li class="text-green">
-                長文の回答をリアルタイムで表示するストリーミング
-              </li>
-              <li class="text-yellow">
-                対話形式での継続的な利用が可能なチャットモード
+              <li>深夜手当（22時以降）の自動計算機能</li>
+              <li>土日祝日の割増時給の自動計算機能</li>
+            </ul>
+          </div>
+          <div class="bg-gray-700 p-6 rounded-lg">
+            <h4 class="text-xl font-bold text-yellow-300 mb-3">
+              【非機能要件（連携）】
+            </h4>
+            <ul class="text-base list-disc pl-5 space-y-2">
+              <li>
+                給与計算ソフト「SMILE給与」と連携可能な形式（CSV）で勤怠データを出力できること
               </li>
             </ul>
           </div>
-          <div data-anim style="--delay: 200ms" class="terminal-window">
-            <div class="terminal-header"></div>
-            <div class="terminal-body">
-              <img
-                src="gemini-cli-overview.png"
-                alt="Gemini CLIの概要"
-                class="w-full h-auto object-contain max-h-full"
-              />
-            </div>
-          </div>
         </div>
+        <p class="text-xl mt-8 text-gray-300">
+          → この「素案」を基に、要件定義書を清書していく。
+        </p>
       </div>
+      <!-- ナビゲーション -->
+      <a href="#slide11" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide13" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">12 / 14</span>
+    </section>
 
-      <!-- Slide 5: Benefits of Gemini CLI -->
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          2. Gemini CLIのメリット
+    <!-- スライド 13: 注意点 -->
+    <section id="slide13" class="slide bg-gray-900">
+      <div class="slide-content">
+        <h2 class="text-5xl font-bold text-cyan-300 mb-10">
+          5. 実践のコツ：AIを「副操縦士」にする
         </h2>
-        <ul
-          class="space-y-6 flex-grow justify-center flex flex-col font-body-lg"
-        >
-          <li data-anim style="--delay: 100ms" class="flex items-start gap-4">
-            <span class="text-blue font-bold mt-1 font-h3">[1]</span>
+        <ul class="text-3xl space-y-6">
+          <li class="flex items-start">
+            <span class="text-red-500 font-bold text-4xl mr-4">⚠️</span>
             <div>
-              <strong class="text-blue">Claude Codeの思想:</strong>
-              開発者のワークフローを妨げず、必要な時にだけ呼び出せる「アシスタント」としての設計。
+              <span class="font-bold">機密情報に注意</span><br />
+              <span class="text-xl text-gray-300"
+                >顧客の個人情報や社外秘の情報をAIに入力しない。ルールを確認する。</span
+              >
             </div>
           </li>
-          <li data-anim style="--delay: 200ms" class="flex items-start gap-4">
-            <span class="text-green font-bold mt-1 font-h3">[2]</span>
+          <li class="flex items-start">
+            <span class="text-yellow-500 font-bold text-4xl mr-4">🤔</span>
             <div>
-              <strong class="text-green">Googleサービス連携:</strong>
-              コマンド一つでスプレッドシートやドキュメントと連携し、データの整形やレポート作成を自動化。
+              <span class="font-bold">AIの回答を鵜呑みにしない</span><br />
+              <span class="text-xl text-gray-300"
+                >AIは「それらしい嘘」をつく。必ず自分の頭でファクトチェックする。</span
+              >
             </div>
           </li>
-          <li data-anim style="--delay: 300ms" class="flex items-start gap-4">
-            <span class="text-purple font-bold mt-1 font-h3">[3]</span>
+          <li class="flex items-start">
+            <span class="text-green-500 font-bold text-4xl mr-4">✈️</span>
             <div>
-              <strong class="text-purple">コスト優位性:</strong>
-              最新の高性能モデル(Gemini 1.5
-              Pro/Flash)が、他の同等性能のモデルと比較して安価に利用可能。
+              <span class="font-bold"
+                >AIは「副操縦士」、判断は「機長（あなた）」</span
+              ><br />
+              <span class="text-xl text-gray-300"
+                >最終的な判断と責任は人間が持つ。AIはあくまで壁打ちと作業の補助。</span
+              >
             </div>
           </li>
         </ul>
       </div>
+      <!-- ナビゲーション -->
+      <a href="#slide12" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide14" class="nav-button nav-next">次へ &rarr;</a>
+      <span class="page-number">13 / 14</span>
+    </section>
 
-      <!-- Slide 6: Comparison -->
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          3. 他のAIコーディングツールとの比較
-        </h2>
-        <div class="flex-grow flex flex-col justify-center">
-          <table
-            data-anim
-            style="--delay: 100ms"
-            class="w-full text-left font-body-md"
-          >
-            <thead>
-              <tr class="border-b-2 border-gray-600">
-                <th class="py-3"></th>
-                <th class="py-3 text-blue">Gemini CLI</th>
-                <th class="py-3">GitHub Copilot</th>
-                <th class="py-3">Cursor</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-b border-gray-700">
-                <td class="py-3 font-bold">提供形態</td>
-                <td class="py-3 text-blue">
-                  <strong>CLI (コマンドライン)</strong>
-                </td>
-                <td class="py-3">IDE拡張機能</td>
-                <td class="py-3">AI統合型エディタ</td>
-              </tr>
-              <tr class="border-b border-gray-700">
-                <td class="py-3 font-bold">主な利用方法</td>
-                <td class="py-3 text-blue">
-                  ターミナルから実行、スクリプト連携
-                </td>
-                <td class="py-3">コード補完、チャット</td>
-                <td class="py-3">エディタ機能として利用</td>
-              </tr>
-              <tr>
-                <td class="py-3 font-bold">最大のメリット</td>
-                <td class="py-3 text-blue">
-                  <strong>自動化</strong>と<strong>連携性</strong>
-                </td>
-                <td class="py-3">シームレスなコード補完</td>
-                <td class="py-3">ゼロからのAIペアプログラミング</td>
-              </tr>
-            </tbody>
-          </table>
-          <div data-anim style="--delay: 200ms" class="mt-8">
-            <h3 class="font-bold text-yellow font-h3 mb-4">
-              // Gemini CLIの強み
-            </h3>
-            <ul class="space-y-3 list-disc list-inside font-body-md">
-              <li>
-                <strong class="text-yellow">連携の自由度:</strong>
-                好きなエディタや既存のワークフローを変えることなく、コマンドとしてAIを組み込める。
-              </li>
-              <li>
-                <strong class="text-yellow">強力な自動化:</strong>
-                シェルスクリプトやMakefileに組み込むことで、「コミット前の自動レビュー」や「CI/CDでのドキュメント生成」といった高度な自動化が簡単に実現できる。
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 7: Interactive Mode (Demo) -->
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          4. 実際の使い方 (デモ)
-        </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="terminal-window">
-            <div class="terminal-header">
-              <div class="flex items-center gap-2">
-                <div
-                  class="w-3 h-3 rounded-full"
-                  style="background-color: #f28b82"
-                ></div>
-                <div
-                  class="w-3 h-3 rounded-full"
-                  style="background-color: #fdd663"
-                ></div>
-                <div
-                  class="w-3 h-3 rounded-full"
-                  style="background-color: #81c995"
-                ></div>
-              </div>
-            </div>
-            <div class="terminal-body p-4 text-left font-code overflow-y-auto">
-              <div>
-                <p class="text-gray-400">
-                  <span>$</span>
-                  <span class="text-white"
-                    >cat server.js | gemini "結果を要約して"</span
-                  >
-                </p>
-                <div class="mt-4 text-white">
-                  <p class="font-body-md">
-                    <span class="text-yellow">✦</span> このファイルは、<span
-                      class="text-blue"
-                      >Node.js</span
-                    >と<span class="text-blue">Express</span
-                    >で商品情報を管理するシンプルなWeb APIサーバーです。
-                  </p>
-                  <p class="font-body-md mt-2">主な機能は以下の通りです。</p>
-                  <ul
-                    class="list-disc list-inside ml-4 mt-2 space-y-1 font-body-sm text-slate-300"
-                  >
-                    <li>全件取得、ID指定、名前での検索</li>
-                    <li>商品追加・更新・削除</li>
-                    <li>データはメモリ上に保存</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div data-anim style="--delay: 200ms" class="space-y-6">
-            <div>
-              <h3 class="font-bold mb-3 text-blue font-h3">// 対話モード</h3>
-              <p class="font-body-md">
-                `gemini`と入力するだけで、AIとの対話を開始できます。質問、コード生成、壁打ちなど、様々な用途に活用できます。
-              </p>
-            </div>
-            <div>
-              <h3 class="font-bold mb-3 text-purple font-h3">
-                // ワンライナー実行
-              </h3>
-              <p class="font-body-md">
-                パイプを使えば、他のコマンドの結果をGeminiに渡して、単発の処理をさせることも可能です。
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 8: VSCode Integration Intro -->
-      <div class="slide flex flex-col justify-center text-center">
-        <h2 data-anim class="font-bold text-gradient font-display">
-          Gemini CLI x VS Code
-        </h2>
-        <p
-          data-anim
-          style="--delay: 100ms"
-          class="mt-4 font-space font-h1 text-slate-300"
-        >
-          連携で開発を加速！
+    <!-- スライド 14: まとめ -->
+    <section
+      id="slide14"
+      class="slide bg-gradient-to-br from-blue-900 to-indigo-900"
+    >
+      <div class="slide-content text-center">
+        <h2 class="text-6xl font-bold mb-10">ご清聴ありがとうございました</h2>
+        <p class="text-3xl mb-6">
+          AIを「経験豊富な先輩」や「優秀なアシスタント」として活用し、<br />上流工程の壁を乗り越えましょう。
         </p>
-        <p
-          data-anim
-          style="--delay: 200ms"
-          class="mt-8 font-body-lg text-slate-400 w-10/12 mx-auto"
-        >
-          この強力な連携を活用し、開発速度を飛躍的に向上させるための具体的な手法を、明日から使える高速化テクニックとしてご紹介します。
-        </p>
+        <p class="text-5xl font-bold text-cyan-300 mt-16">Q & A</p>
       </div>
-
-      <!-- Slide 9: Technique 1 -->
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          5. 高速化テクニック①: 思考を止めないコーディング
-        </h2>
-        <div class="grid grid-cols-3 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="col-span-1 space-y-6">
-            <div class="list-item-box border-l-4 border-blue">
-              <h3 class="font-bold text-blue font-h3">
-                コンテキストの自動認識
-              </h3>
-              <p class="font-body-md mt-2">
-                開いているファイルや選択範囲を自動で認識。「選択範囲に商品を追加して」と指示するだけ。
-              </p>
-            </div>
-            <div class="list-item-box border-l-4 border-purple">
-              <h3 class="font-bold text-purple font-h3">ネイティブ差分表示</h3>
-              <p class="font-body-md mt-2">
-                Geminiが提案した変更は、VSCodeの差分ビューで直接確認・編集可能。エディタとターミナルの行き来は不要です。
-              </p>
-            </div>
-          </div>
-          <div
-            data-anim
-            style="--delay: 200ms"
-            class="col-span-2 terminal-window"
-          >
-            <div class="terminal-header"></div>
-            <div class="terminal-body">
-              <img
-                src="vscode-diff-view.png"
-                alt="VSCodeの差分表示"
-                class="w-full h-auto object-contain max-h-full"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 10: Technique 2 -->
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          5. 高速化テクニック②: 反復作業を撲滅
-        </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="space-y-6">
-            <div class="list-item-box border-l-4 border-yellow">
-              <h3 class="font-bold text-yellow font-h2">
-                VSCodeタスクで自動化
-              </h3>
-              <p class="font-body-lg mt-2">
-                `tasks.json`によく使うコマンドを登録すれば、コマンドパレットやショートカットから一発で定型作業を実行できます。
-              </p>
-            </div>
-          </div>
-          <div
-            data-anim
-            style="--delay: 200ms"
-            class="code-block text-sm h-full flex flex-col justify-center"
-          >
-            <pre><code>{
-  <span class="c-yellow">"version"</span>: <span class="c-yellow">"2.0.0"</span>,
-  <span class="c-yellow">"tasks"</span>: [
-    {
-      <span class="c-yellow">"label"</span>: <span class="c-yellow">"Gemini: 選択範囲のコードを説明"</span>,
-      <span class="c-yellow">"type"</span>: <span class="c-yellow">"shell"</span>,
-      <span class="c-yellow">"command"</span>: <span class="c-yellow">"echo \"このコードを日本語で詳しく説明してください:\\n\\n${selectedText}\" | gemini"</span>,
-      <span class="c-yellow">"problemMatcher"</span>: [],
-      <span class="c-yellow">"presentation"</span>: {
-        <span class="c-yellow">"echo"</span>: <span class="c-purple">true</span>,
-        <span class="c-yellow">"reveal"</span>: <span class="c-yellow">"always"</span>,
-        <span class="c-yellow">"focus"</span>: <span class="c-purple">true</span>,
-        <span class="c-yellow">"panel"</span>: <span class="c-yellow">"new"</span>,
-        <span class="c-yellow">"clear"</span>: <span class="c-purple">true</span>
-      }
-    }
-  ]
-}
-</code></pre>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 11: VSCode Task Example -->
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          5. 高速化テクニック②: 反復作業を撲滅 (詳細)
-        </h2>
-        <div class="flex-grow flex flex-col justify-center gap-4">
-          <div data-anim style="--delay: 100ms" class="space-y-4 text-center">
-            <h3 class="font-bold text-yellow font-h2">
-              例: JSDocコメントを定型作業にする
-            </h3>
-            <p class="font-body-lg">
-              毎回同じプロンプトを入力する定型作業は、`tasks.json`に登録してしまいましょう。
-            </p>
-            <div class="flex justify-center gap-8 font-body-md mt-4">
-              <p>
-                <span class="text-blue font-bold">①</span>
-                `.vscode/tasks.json`に反復作業を登録
-              </p>
-              <p>
-                <span class="text-purple font-bold">②</span>
-                対象の関数を選択して`Cmd+Shift+P`で実行
-              </p>
-            </div>
-          </div>
-          <div data-anim style="--delay: 200ms" class="terminal-window h-1/2">
-            <div class="terminal-header"></div>
-            <div class="terminal-body">
-              <img
-                src="vscode-tasks-execution.png"
-                alt="VSCodeタスクの実行例"
-                class="w-full h-auto object-contain max-h-full"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 12: Use Case - Test Gen 1 -->
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          6. 活用事例: テストコード生成 (1/3)
-        </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="space-y-4">
-            <h3 class="font-bold text-blue font-h2">Step 1: 生成を命令する</h3>
-            <p class="font-body-lg">
-              右のようなソースコードをパイプで渡し、ユニットテストの生成を命令します。
-            </p>
-            <p class="code-block font-code mt-4">
-              cat server.js | gemini "Jestでユニットテストを書いて" >
-              server.test.js
-            </p>
-          </div>
-          <div data-anim style="--delay: 200ms" class="code-block text-sm">
-            <pre><code><span class="c-gray">// GET /api/products - Get all products (with search)</span>
-<span class="c-green">app.get</span>(<span class="c-yellow">'/api/products'</span>, (<span class="c-cyan">req</span>, <span class="c-cyan">res</span>) => {
-  <span class="c-purple">const</span> { <span class="c-cyan">name</span> } = <span class="c-cyan">req.query</span>;
-  <span class="c-purple">if</span> (<span class="c-cyan">name</span>) {
-    <span class="c-purple">const</span> <span class="c-cyan">filteredProducts</span> = <span class="c-cyan">products</span>.<span class="c-green">filter</span>(<span class="c-cyan">p</span> => <span class="c-cyan">p.name</span>.<span class="c-green">includes</span>(<span class="c-cyan">name</span>));
-    <span class="c-purple">return</span> <span class="c-cyan">res</span>.<span class="c-green">json</span>(<span class="c-cyan">filteredProducts</span>);
-  }
-  <span class="c-cyan">res</span>.<span class="c-green">json</span>(<span class="c-cyan">products</span>);
-});
-
-<span class="c-gray">// GET /api/products/:id - Get a single product</span>
-<span class="c-green">app.get</span>(<span class="c-yellow">'/api/products/:id'</span>, (<span class="c-cyan">req</span>, <span class="c-cyan">res</span>) => {
-  <span class="c-purple">const</span> <span class="c-cyan">product</span> = <span class="c-cyan">products</span>.<span class="c-green">find</span>(<span class="c-cyan">p</span> => <span class="c-cyan">p.id</span> === <span class="c-green">parseInt</span>(<span class="c-cyan">req.params.id</span>));
-  <span class="c-purple">if</span> (<span class="c-cyan">product</span>) {
-    <span class="c-cyan">res</span>.<span class="c-green">json</span>(<span class="c-cyan">product</span>);
-  } <span class="c-purple">else</span> {
-    <span class="c-cyan">res</span>.<span class="c-green">status</span>(<span class="c-orange">404</span>).<span class="c-green">send</span>(<span class="c-yellow">'Product not found'</span>);
-  }
-});</code></pre>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 13: Use Case - Test Gen 2 -->
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          6. 活用事例: テストコード生成 (2/3)
-        </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="space-y-6">
-            <h3 class="font-bold text-purple font-h2">
-              Step 2: テストファイルが生成される
-            </h3>
-            <p class="font-body-lg">
-              Geminiが`server.js`の内容を解釈し、テストコードを記述した`server.test.js`を生成します。
-            </p>
-            <p class="font-body-md text-slate-400">
-              基本的なエンドポイントの疎通確認や、正常系・異常系のテストケースが含まれており、テスト作成の土台として非常に有用です。
-            </p>
-          </div>
-          <div data-anim style="--delay: 200ms" class="terminal-window">
-            <div class="terminal-header"></div>
-            <div class="terminal-body">
-              <img
-                src="test-gen-step2.png"
-                alt="生成されたテストファイル"
-                class="w-full h-auto object-contain max-h-full"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Slide 14: Use Case - Test Gen 3 -->
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          6. 活用事例: テストコード生成 (3/3)
-        </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="space-y-6">
-            <h3 class="font-bold text-green font-h2">
-              Step 3: テストを実行する
-            </h3>
-            <p class="font-body-lg">
-              生成されたテストファイルを使って、`npm
-              test`コマンドでユニットテストを実行します。
-            </p>
-            <p class="font-body-md text-slate-400">
-              AIが生成したコードが、修正なしでそのままパスすることもあります。これにより、テストコード作成にかかる時間を劇的に削減できます。
-            </p>
-            <p class="code-block font-code mt-2">npm test</p>
-          </div>
-          <div data-anim style="--delay: 200ms" class="terminal-window">
-            <div class="terminal-header"></div>
-            <div class="terminal-body">
-              <img
-                src="test-gen-step3.png"
-                alt="テスト実行結果"
-                class="w-full h-auto object-contain max-h-full"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          6. 活用事例: ログ監視と要約 (1/3)
-        </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="space-y-6">
-            <h3 class="font-bold text-red font-h2">問題提起: ログの海</h3>
-            <p class="font-body-lg">
-              サーバーから出力される大量のシステムログ。この中から手動で重要なエラーや警告を見つけ出すのは非常に困難な作業です。
-            </p>
-          </div>
-          <div
-            data-anim
-            style="--delay: 200ms"
-            class="code-block text-xs h-full overflow-y-auto"
-          >
-            <pre><code><span class="text-blue">INFO</span>: 2025-10-14 13:05:01 - [main] Application starting up...
-<span class="text-blue">INFO</span>: 2025-10-14 13:05:02 - [main] Configuration loaded from /etc/app/config.yml
-<span class="text-blue">INFO</span>: 2025-10-14 13:05:03 - [main] Database connection pool initialized for postgresql://db-main.internal:5432
-<span class="text-blue">INFO</span>: 2025-10-14 13:05:03 - [main] Redis cache client connected to redis.internal:6379
-<span class="text-blue">INFO</span>: 2025-10-14 13:05:04 - [main] Starting web server on 0.0.0.0:8080
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:06:10 - [worker-1] Health check endpoint /health called from 192.168.1.100
-<span class="text-blue">INFO</span>: 2025-10-14 13:06:15 - [http-nio-8080-exec-1] User authentication request for user 'alice'.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:06:15 - [http-nio-8080-exec-1] Authenticating user 'alice' against LDAP server.
-<span class="text-blue">INFO</span>: 2025-10-14 13:06:16 - [http-nio-8080-exec-1] User 'alice' logged in successfully. Session ID: fa21b8c9
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:06:20 - [http-nio-8080-exec-2] GET /api/v1/dashboard request from user 'alice'.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:06:21 - [worker-3] Fetching dashboard data for user_id=101.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:06:22 - [worker-3] SQL Query: SELECT * FROM user_widgets WHERE user_id = 101;
-<span class="text-blue">INFO</span>: 2025-10-14 13:07:05 - [http-nio-8080-exec-3] User authentication request for user 'bob'.
-<span class="text-blue">INFO</span>: 2025-10-14 13:07:06 - [http-nio-8080-exec-3] User 'bob' logged in successfully. Session ID: 3e45c1aa
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:07:10 - [http-nio-8080-exec-4] POST /api/v1/reports request from user 'bob'.
-<span class="text-blue">INFO</span>: 2025-10-14 13:07:11 - [worker-2] Generating new report for user 'bob'.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:07:15 - [worker-2] Report generation task #451 started.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:07:30 - [worker-2] Data aggregation complete for report #451.
-<span class="text-blue">INFO</span>: 2025-10-14 13:07:35 - [worker-2] Report #451 generated successfully.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:08:01 - [worker-1] Health check endpoint /health called from 192.168.1.100
-<span class="text-yellow">WARNING</span>: 2025-10-14 13:08:45 - [worker-3] High memory usage detected: 88% used.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:09:00 - [http-nio-8080-exec-5] GET /api/v1/users/search?q=test request from user 'alice'.
-<span class="text-blue">INFO</span>: 2025-10-14 13:09:01 - [worker-1] User search performed with query: 'test'.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:10:00 - [worker-4] Starting scheduled job: CleanupTemporaryFiles.
-<span class="text-blue">INFO</span>: 2025-10-14 13:10:01 - [worker-4] Deleted 152 temporary files from /tmp.
-<span class="text-blue">INFO</span>: 2025-10-14 13:11:00 - [http-nio-8080-exec-6] User authentication request for user 'charlie'.
-<span class="text-red">ERROR</span>: 2025-10-14 13:11:01 - [http-nio-8080-exec-6] Authentication failed for user 'charlie': Invalid credentials provided.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:11:05 - [http-nio-8080-exec-7] GET /api/v1/products/12345 request from user 'alice'.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:11:06 - [worker-2] Fetching product details from cache for product_id=12345.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:11:06 - [worker-2] Cache miss for product_id=12345. Fetching from database.
-<span class="text-red">ERROR</span>: 2025-10-14 13:11:10 - [worker-2] Failed to connect to database: Connection timed out after 3001ms.
-<span class="text-blue">INFO</span>: 2025-10-14 13:11:11 - [worker-2] Retrying database connection... (Attempt 1/3)
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:11:15 - [worker-2] Database connection re-established successfully.
-<span class="text-blue">INFO</span>: 2025-10-14 13:11:16 - [worker-2] Successfully fetched product details for product_id=12345.
-<span class="text-yellow">WARNING</span>: 2025-10-14 13:12:30 - [http-nio-8080-exec-1] API response time for /api/v1/products/12345 is high: 3500ms.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:13:01 - [worker-1] Health check endpoint /health called from 192.168.1.100
-<span class="text-blue">INFO</span>: 2025-10-14 13:14:05 - [http-nio-8080-exec-2] User 'alice' logged out.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:15:00 - [worker-3] Processing data batch #882.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:15:05 - [worker-3] Batch #882 contains 500 records.
-<span class="text-red">ERROR</span>: 2025-10-14 13:15:10 - [worker-3] NullPointerException at com.example.Processor.run(Processor.java:152) while processing record #882-231.
-<span class="text-blue">INFO</span>: 2025-10-14 13:15:11 - [worker-3] Skipping corrupted record #882-231.
-<span class="text-purple">DEBUG</span>: 2025-10-14 13:15:30 - [worker-3] Data processing for batch #882 complete.
-<span class="text-yellow">WARNING</span>: 2025-10-14 13:16:00 - [main] Disk space is running low on /var/log. 95% used. Log rotation might be required.
-                    </code></pre>
-          </div>
-        </div>
-      </div>
-
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          6. 活用事例: ログ監視と要約 (2/3)
-        </h2>
-        <div class="flex-grow flex flex-col justify-center text-center">
-          <div data-anim class="space-y-4">
-            <h3 class="font-bold text-blue font-h2">
-              Step 1: パイプで連携し要約を依頼
-            </h3>
-            <p class="font-body-lg">
-              ログ出力をパイプ(|)で直接Geminiに渡し、エラーの抽出と原因・対処法の説明を依頼します。
-            </p>
-            <p
-              class="code-block font-body-md mt-8 mx-auto w-full max-w-4xl text-center p-6"
-            >
-              journalctl -n 50 | gemini gen
-              "このシステムログの中からエラー(error)や警告(warning)に関する行だけを抜き出して。何が起きているか、考えられる原因と対処法を箇条書きで簡潔に日本語で説明して"
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          6. 活用事例: ログ監視と要約 (3/3)
-        </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="space-y-6">
-            <h3 class="font-bold text-green font-h2">
-              Step 2: 要約レポートを確認
-            </h3>
-            <p class="font-body-lg">
-              Geminiがログを解析し、人間が理解しやすい形で整理されたレポートを出力します。
-            </p>
-            <p class="font-body-md text-slate-400">
-              「認証エラーが多発」「ディスク容量の警告」など、重要なインシデントを即座に把握できます。
-            </p>
-          </div>
-          <div data-anim style="--delay: 200ms" class="terminal-window">
-            <div class="terminal-header"></div>
-            <div
-              class="terminal-body p-4 text-left font-code text-base overflow-y-auto"
-            >
-              <div>
-                <p>
-                  <span class="text-green">ℹ</span> Update successful! The new
-                  version will be used on your next run.
-                </p>
-                <h4 class="font-bold text-yellow mt-4">発生している事象</h4>
-                <ul class="list-disc list-inside ml-4 text-slate-300">
-                  <li>
-                    認証エラー:
-                    <code class="text-red"
-                      >Authentication failed for user 'charlie'</code
-                    >
-                  </li>
-                  <li>
-                    データベース接続エラー:
-                    <code class="text-red">Connection timed out</code>
-                  </li>
-                  <li>
-                    アプリケーションエラー:
-                    <code class="text-red">NullPointerException</code>
-                  </li>
-                </ul>
-                <h4 class="font-bold text-yellow mt-4">
-                  考えられる原因と対処法
-                </h4>
-                <ul class="list-disc list-inside ml-4 text-slate-300 space-y-2">
-                  <li>
-                    <strong class="text-blue">認証エラー:</strong><br />原因:
-                    ユーザー 'charlie' が誤った認証情報...<br />対処法:
-                    'charlie' に正しい認証情報を確認...
-                  </li>
-                  <li>
-                    <strong class="text-blue">DB接続エラー:</strong><br />原因:
-                    DBサーバーへの接続がタイムアウト...<br />対処法:
-                    DBサーバーの死活監視、ネットワーク...
-                  </li>
-                  <li>
-                    <strong class="text-blue">アプリエラー:</strong><br />原因:
-                    データ処理中に予期せず null 値が参照...<br />対処法:
-                    開発チームにコードレビューとデータ調査を依頼...
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          7. 活用の課題と対策
-        </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="risk-box h-full">
-            <h3 class="font-bold mb-4 text-red font-h2">// 課題点 // Risks</h3>
-            <ul class="space-y-4 list-disc list-inside font-body-md">
-              <li>
-                <strong>ハルシネーション</strong>
-                <p class="font-body-sm text-slate-400 ml-4">
-                  例: 存在しない関数を「あります」と答える
-                </p>
-              </li>
-              <li>
-                <strong>コンテキスト長の限界</strong>
-                <p class="font-body-sm text-slate-400 ml-4">
-                  例: 長大なコードを渡すと末尾の処理で冒頭を忘れる
-                </p>
-              </li>
-              <li>
-                <strong>セキュリティリスク</strong>
-                <p class="font-body-sm text-slate-400 ml-4">
-                  例: DB接続文字列やAPIキーをAIに送信してしまう
-                </p>
-              </li>
-            </ul>
-          </div>
-          <div data-anim style="--delay: 200ms" class="solution-box h-full">
-            <h3 class="font-bold mb-4 text-green font-h2">
-              // 対策 // Solutions
-            </h3>
-            <ul class="space-y-4 list-disc list-inside font-body-md">
-              <li>
-                <strong>ファクトチェックの徹底:</strong>
-                生成された内容は必ず実行前に確認・検証する。
-              </li>
-              <li>
-                <strong>入力の分割・要約:</strong>
-                情報を絞り込み、重要な部分だけをインプットする。
-              </li>
-              <li>
-                <strong>データサニタイズ:</strong>
-                機密情報を送信前にフィルタリングする仕組みを導入。
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          8. 組織導入ガイド: コスト管理
-        </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div
-            data-anim
-            style="--delay: 100ms"
-            class="list-item-box border-l-4 border-yellow h-full flex flex-col justify-center"
-          >
-            <h3 class="font-bold mb-4 text-yellow font-h2">
-              一般的な利用料金の目安
-            </h3>
-            <p class="font-body-md mb-4">
-              開発者<strong class="text-yellow">5人</strong
-              >のチームが、1人あたり1日<strong class="text-yellow">100回</strong
-              >（1回平均2000トークン）利用した場合...
-            </p>
-            <p class="font-body-md">
-              <strong class="text-yellow">計算 (1ヶ月):</strong><br />
-              (1,000,000トークン/日 / 1,000,000) * $3.5 * 30日
-            </p>
-            <p class="font-h2 text-center mt-4">
-              月額 約
-              <span class="text-yellow font-bold text-gradient">$105</span>
-            </p>
-            <p class="text-slate-400 text-center font-body-sm mt-2">
-              (Gemini 1.5 Pro 入力トークン単価で計算)
-            </p>
-          </div>
-          <div data-anim style="--delay: 200ms" class="space-y-6">
-            <h3 class="font-bold mb-4 text-green font-h2">
-              コスト超過を防ぐには
-            </h3>
-            <ul class="space-y-4 font-body-lg">
-              <li class="flex items-start gap-3">
-                <span class="text-green font-bold">[1]</span>
-                <div>
-                  <strong>予算アラートを設定する:</strong>
-                  GCPで上限を設定し、使いすぎを防止。<strong class="text-red"
-                    >(最重要)</strong
-                  >
-                </div>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="text-green font-bold">[2]</span>
-                <div>
-                  <strong>モデルを賢く使い分ける:</strong>
-                  タスクに応じて最適なモデルを選び、コストを抑制。
-                </div>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="text-green font-bold">[3]</span>
-                <div>
-                  <strong>利用状況を監視する:</strong>
-                  GCPダッシュボードで利用量を定期的に確認。
-                </div>
-              </li>
-            </ul>
-            <div class="text-xs text-slate-400 mt-4">
-              <h4 class="font-bold text-slate-300">補足: 無料利用枠について</h4>
-              <p>
-                Gemini 1.5
-                Flashモデルには、個人での学習や小規模な試用向けの無料枠（月200万トークンまで）も存在します。
-              </p>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
-      <div class="slide">
-        <h2 data-anim class="font-bold slide-header font-h1">
-          9. 組織導入ガイド: 利用ガイドライン
-        </h2>
-        <div class="grid grid-cols-2 gap-8 flex-grow items-center">
-          <div data-anim style="--delay: 100ms" class="risk-box h-full">
-            <h3 class="font-bold mb-4 text-red font-h2">
-              // 禁止事項 // DO NOT
-            </h3>
-            <ul class="space-y-3 font-body-lg list-disc list-inside">
-              <li>
-                個人情報(PII)の入力
-                <p class="font-body-sm text-slate-400 ml-4">
-                  例：氏名、住所、電話番号などをプロンプトに含めない
-                </p>
-              </li>
-              <li>
-                顧客の機密情報・未公開情報の入力
-                <p class="font-body-sm text-slate-400 ml-4">
-                  例：顧客データや、未リリースの製品情報など
-                </p>
-              </li>
-              <li>
-                パスワードやAPIキーの直接入力
-                <p class="font-body-sm text-slate-400 ml-4">
-                  例：.envファイルの内容をそのまま貼り付けない
-                </p>
-              </li>
-            </ul>
-          </div>
-          <div data-anim style="--delay: 200ms" class="solution-box h-full">
-            <h3 class="font-bold mb-4 text-green font-h2">// 推奨事項 // DO</h3>
-            <ul class="list-disc list-inside space-y-3 font-body-lg">
-              <li>機密情報は環境変数やGCP Secret Managerを利用する</li>
-              <li>生成コードは必ずテストとレビューを行う</li>
-              <li>重要な情報はファクトチェックを行う</li>
-              <li>定型プロンプトはチーム内で共有する</li>
-              <li>AIの回答に疑問があれば責任者に相談</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="slide flex-col justify-center items-center text-center">
-        <h2 data-anim class="font-bold mb-10 text-gradient font-display">
-          まとめ
-        </h2>
-        <p
-          data-anim
-          style="--delay: 100ms"
-          class="leading-relaxed text-slate-300 font-h2"
-        >
-          Gemini CLIは、開発者の生産性を飛躍的に向上させる強力なツールです。
-        </p>
-        <p
-          data-anim
-          style="--delay: 200ms"
-          class="leading-relaxed text-slate-300 font-h2 mt-4"
-        >
-          適切なガイドラインの下で活用し、開発ワークフローを革新しましょう。
-        </p>
-      </div>
-
-      <!-- <div class="slide flex-col justify-center items-center text-center">
-        <h2 data-anim class="font-bold mb-10 text-gradient font-display">
-          このスライド資料、実は...
-        </h2>
-        <p
-          data-anim
-          style="--delay: 100ms"
-          class="leading-relaxed text-slate-300 font-h2"
-        >
-          <span class="text-yellow font-bold">Geminiを使ってHTMLとCSSで</span
-          >作成しました！
-        </p>
-      </div>
-    </div> -->
-
-    <!-- Navigation -->
-    <div class="slide-nav">
-      <button id="prevBtn" class="nav-btn">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="3"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="m15 18-6-6 6-6" />
-        </svg>
-      </button>
-      <div id="slideCounter" class="text-lg font-mono">1 / 22</div>
-      <button id="screenshotBtn" class="nav-btn" title="Capture Screenshot">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="7 10 12 15 17 10"></polyline>
-          <line x1="12" y1="15" x2="12" y2="3"></line>
-        </svg>
-      </button>
-      <button id="nextBtn" class="nav-btn">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="3"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="m9 18 6-6-6-6" />
-        </svg>
-      </button>
-    </div>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const slides = document.querySelectorAll(".slide");
-        const prevBtn = document.getElementById("prevBtn");
-        const nextBtn = document.getElementById("nextBtn");
-        const screenshotBtn = document.getElementById("screenshotBtn");
-        const slideCounter = document.getElementById("slideCounter");
-        const slideNav = document.querySelector(".slide-nav");
-        let currentSlide = 0;
-
-        function showSlide(index) {
-          slides.forEach((slide, i) => {
-            slide.classList.toggle("active", i === index);
-
-            const animatableElements = slide.querySelectorAll("[data-anim]");
-            if (slide.classList.contains("active")) {
-              animatableElements.forEach((el, j) => {
-                const delay =
-                  el.style.getPropertyValue("--delay") || `${j * 100}ms`;
-                setTimeout(() => {
-                  el.style.opacity = "1";
-                  el.style.transform = "translateY(0)";
-                }, parseFloat(delay));
-              });
-            } else {
-              animatableElements.forEach((el) => {
-                el.style.opacity = "0";
-                el.style.transform = "translateY(20px)";
-              });
-            }
-          });
-          slideCounter.textContent = `${index + 1} / ${slides.length}`;
-        }
-
-        function nextSlide() {
-          currentSlide = (currentSlide + 1) % slides.length;
-          showSlide(currentSlide);
-        }
-
-        function prevSlide() {
-          currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-          showSlide(currentSlide);
-        }
-
-        async function takeScreenshot() {
-          const activeSlide = document.querySelector(".slide.active");
-          if (!activeSlide) return;
-
-          const slideNumber = currentSlide + 1;
-          slideNav.style.visibility = "hidden";
-
-          try {
-            const canvas = await html2canvas(activeSlide, {
-              backgroundColor: "#0A0A0F",
-              scale: 2,
-            });
-            const link = document.createElement("a");
-            link.download = `gemini-cli-slide-${slideNumber}.png`;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-          } catch (error) {
-            console.error("Screenshot failed:", error);
-          } finally {
-            slideNav.style.visibility = "visible";
-          }
-        }
-
-        nextBtn.addEventListener("click", nextSlide);
-        prevBtn.addEventListener("click", prevSlide);
-        screenshotBtn.addEventListener("click", takeScreenshot);
-
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "ArrowRight") {
-            nextSlide();
-          } else if (e.key === "ArrowLeft") {
-            prevSlide();
-          }
-        });
-
-        showSlide(currentSlide);
-      });
-    </script>
+      <!-- ナビゲーション -->
+      <a href="#slide13" class="nav-button nav-prev">&larr; 前へ</a>
+      <a href="#slide1" class="nav-button nav-next">最初へ &hookleftarrow;</a>
+      <span class="page-number">14 / 14</span>
+    </section>
   </body>
 </html>
